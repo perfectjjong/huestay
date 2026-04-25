@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hue Stay Admin — 문의 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FDFAF5; --sand: #F5ECD7; --gold: #E8C896;
+      --terra: #C4714A; --brown: #3D2B1F; --brown-light: #8C6B57;
+      --shadow: rgba(61,43,31,.10);
+    }
+    body { font-family: 'Noto Sans KR', sans-serif; background: var(--cream); color: var(--brown); min-height: 100vh; }
+    header {
+      background: var(--brown); color: #fff; padding: 1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.1rem; }
+    header a { color: var(--gold); font-size: .82rem; text-decoration: none; }
+    .login-wrap { max-width: 380px; margin: 5rem auto; padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 5px 30px var(--shadow); }
+    .login-wrap h2 { font-size: 1.1rem; margin-bottom: 1.2rem; }
+    .login-wrap input { width: 100%; padding: .7rem 1rem; border: 1.5px solid var(--gold); border-radius: 8px; font-size: .9rem; font-family: inherit; outline: none; }
+    .login-wrap input:focus { border-color: var(--terra); }
+    .btn { display: block; width: 100%; margin-top: .8rem; padding: .75rem; background: var(--terra); color: #fff; border: none; border-radius: 8px; font-size: .95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn:hover { background: #A85B38; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.2rem; }
+    .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .stat { background: #fff; border-radius: 10px; padding: .8rem 1.2rem; box-shadow: 0 2px 12px var(--shadow); min-width: 110px; }
+    .stat-num { font-size: 1.7rem; font-weight: 700; color: var(--terra); }
+    .stat-label { font-size: .75rem; color: var(--brown-light); }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 20px var(--shadow); }
+    thead { background: var(--brown); color: #fff; }
+    th { padding: .7rem 1rem; text-align: left; font-size: .78rem; font-weight: 500; white-space: nowrap; }
+    td { padding: .75rem 1rem; font-size: .82rem; border-bottom: 1px solid var(--sand); vertical-align: top; max-width: 220px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FDFAF5; }
+    .badge-priv { background: #F3F4F6; color: #374151; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; white-space: nowrap; }
+    .badge-pub  { background: #D1FAE5; color: #065F46; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; white-space: nowrap; }
+    .msg-cell { white-space: pre-wrap; word-break: break-word; max-height: 80px; overflow: hidden; cursor: pointer; }
+    .msg-cell.expanded { max-height: none; }
+    .reply-btns { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .reply-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .65rem; border-radius: 7px; text-decoration: none; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+    .reply-ka { background: #FEE500; color: #3A1D1D; }
+    .reply-wa { background: #25D366; color: #fff; }
+    .empty { text-align: center; padding: 3rem; color: var(--brown-light); }
+    #loginSection, #adminSection { }
+    .hidden { display: none !important; }
+    .err { color: #DC2626; font-size: .82rem; margin-top: .5rem; }
+    @media (max-width: 640px) {
+      table, thead, tbody, tr, th, td { display: block; }
+      thead { display: none; }
+      tr { border: 1px solid var(--sand); border-radius: 10px; margin-bottom: .7rem; padding: .5rem; }
+      td { border: none; padding: .3rem .5rem; }
+      td::before { content: attr(data-label); font-weight: 600; font-size: .72rem; color: var(--brown-light); display: block; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🏡 Hue Stay · 어드민</h1>
+  <a href="/">← 홈으로</a>
+</header>
+
+<div id="loginSection">
+  <div class="login-wrap">
+    <h2>관리자 로그인</h2>
+    <input type="password" id="secretInput" placeholder="관리자 비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn" onclick="doLogin()">로그인</button>
+    <div class="err hidden" id="loginErr">비밀번호가 올바르지 않습니다.</div>
+  </div>
+</div>
+
+<div id="adminSection" class="hidden">
+  <div class="container">
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statTotal">-</div><div class="stat-label">전체 문의</div></div>
+      <div class="stat"><div class="stat-num" id="statPub">-</div><div class="stat-label">공개</div></div>
+      <div class="stat"><div class="stat-num" id="statPriv">-</div><div class="stat-label">비공개</div></div>
+    </div>
+    <div id="tableWrap"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://huestay-api.perfectjjong.workers.dev';
+let adminSecret = '';
+
+function doLogin() {
+  const v = document.getElementById('secretInput').value.trim();
+  if (!v) return;
+  adminSecret = v;
+  fetchInquiries();
+}
+
+async function fetchInquiries() {
+  const url = `${API_BASE}/admin/inquiries?secret=${encodeURIComponent(adminSecret)}`;
+  try {
+    const r = await fetch(url);
+    const d = await r.json();
+    if (!d.ok) {
+      document.getElementById('loginErr').classList.remove('hidden');
+      return;
+    }
+    document.getElementById('loginErr').classList.add('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('adminSection').classList.remove('hidden');
+    renderTable(d.posts || []);
+  } catch {
+    document.getElementById('loginErr').textContent = '서버 오류. 잠시 후 다시 시도해주세요.';
+    document.getElementById('loginErr').classList.remove('hidden');
+  }
+}
+
+function renderTable(posts) {
+  const pub  = posts.filter(p => !p.isPrivate).length;
+  const priv = posts.filter(p =>  p.isPrivate).length;
+  document.getElementById('statTotal').textContent = posts.length;
+  document.getElementById('statPub').textContent   = pub;
+  document.getElementById('statPriv').textContent  = priv;
+
+  if (!posts.length) {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty">📋 아직 접수된 문의가 없습니다.</div>';
+    return;
+  }
+
+  const rows = [...posts].reverse().map(p => {
+    const wa = p.contact ? `<a class="reply-btn reply-wa" href="https://wa.me/${p.contact.replace(/[^0-9]/g,'')}" target="_blank">📱 왓츠앱</a>` : '';
+    const ka = `<a class="reply-btn reply-ka" href="https://open.kakao.com/o/search#perfectjjong" target="_blank">💬 카톡</a>`;
+    const badge = p.isPrivate
+      ? `<span class="badge-priv">🔒 비공개</span>`
+      : `<span class="badge-pub">🌐 공개</span>`;
+    return `<tr>
+      <td data-label="날짜">${esc(p.date)}</td>
+      <td data-label="이름">${esc(p.name)} ${badge}</td>
+      <td data-label="연락처">${esc(p.contact||'-')}</td>
+      <td data-label="이메일">${esc(p.email||'-')}</td>
+      <td data-label="회사명">${esc(p.company||'-')}</td>
+      <td data-label="제목"><strong>${esc(p.subject)}</strong></td>
+      <td data-label="내용"><div class="msg-cell" onclick="this.classList.toggle('expanded')">${esc(p.message)}</div></td>
+      <td data-label="답변">${wa}${ka}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tableWrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>날짜</th><th>이름</th><th>연락처</th><th>이메일</th><th>회사명</th><th>제목</th><th>내용</th><th>답변</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
