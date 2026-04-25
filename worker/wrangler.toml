@@ -1,0 +1,9 @@
+name = "huestay-api"
+main = "src/index.js"
+compatibility_date = "2025-04-01"
+
+# 변수는 secret으로만 관리합니다 (wrangler secret put GOOGLE_SA_JSON 등)
+# 비밀이 아닌 값만 여기에 둘 수 있습니다.
+[vars]
+SHEET_TAB = "시트1"
+ALLOWED_ORIGIN = "*"   # 배포 후 https://huestay.pages.dev 로 변경 권장

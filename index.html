@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hue Stay — 사우디아라비아 한인 게스트하우스</title>
+  <meta name="description" content="사우디아라비아 리야드에서 경험하는 따뜻한 한국의 감성. Hue Stay 게스트하우스.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FDFAF5;
+      --sand: #F5ECD7;
+      --gold: #E8C896;
+      --terra: #C4714A;
+      --terra-dark: #A85B38;
+      --brown: #3D2B1F;
+      --brown-light: #8C6B57;
+      --shadow: rgba(61,43,31,0.10);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--cream);
+      color: var(--brown);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      height: 60px; padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(253,250,245,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(196,113,74,0.12);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+    .nav-logo {
+      display: flex; align-items: center; text-decoration: none;
+    }
+    .nav-logo img {
+      height: 36px; width: auto; display: block;
+      border-radius: 4px;
+      background: #fff;
+      padding: 3px 6px;
+    }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--brown);
+      font-size: .84rem; font-weight: 500; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--terra); }
+    .nav-right { display: flex; align-items: center; gap: .8rem; }
+    .lang-toggle { display: flex; background: var(--sand); border-radius: 20px; padding: 3px; }
+    .lang-btn {
+      padding: 3px 12px; border: none; background: transparent;
+      border-radius: 16px; cursor: pointer; font-size: .75rem; font-weight: 700;
+      color: var(--brown-light); transition: all .2s; font-family: inherit;
+    }
+    .lang-btn.active { background: var(--terra); color: #fff; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--brown); border-radius: 2px; }
+    .mobile-menu {
+      display: none; position: fixed; top: 60px; left: 0; right: 0;
+      background: var(--cream); padding: 1rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--sand); z-index: 899;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a { display: block; padding: .75rem 0; text-decoration: none; color: var(--brown); font-size: .95rem; border-bottom: 1px solid var(--sand); }
+    .mobile-lang { display: flex; gap: .5rem; margin-top: 1rem; }
+    .mobile-lang button { flex: 1; padding: .55rem; border: 1.5px solid var(--gold); background: transparent; border-radius: 8px; font-size: .85rem; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--brown); transition: all .2s; }
+    .mobile-lang button.active { background: var(--terra); border-color: var(--terra); color: #fff; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100svh;
+      background:
+        linear-gradient(160deg, rgba(61,43,31,.52) 0%, rgba(196,113,74,.42) 45%, rgba(61,43,31,.68) 100%),
+        linear-gradient(135deg, #EDD8A8 0%, #D9856A 38%, #C4714A 65%, #9B4E2E 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    /* Local hero image — will show if file exists */
+    #hero { background-image:
+      linear-gradient(160deg, rgba(61,43,31,.5) 0%, rgba(196,113,74,.38) 45%, rgba(61,43,31,.65) 100%),
+      url('images/hero.jpg');
+      background-size: cover; background-position: center;
+    }
+    .hero-inner { position: relative; z-index: 2; color: #fff; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; }
+    .hero-eyebrow {
+      font-size: .72rem; letter-spacing: 5px; text-transform: uppercase;
+      opacity: .82; margin-bottom: 1.2rem;
+      background: rgba(255,255,255,.12); backdrop-filter: blur(6px);
+      padding: .3rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,.2);
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 12vw, 6rem);
+      font-weight: 700; letter-spacing: 8px;
+      text-shadow: 0 4px 28px rgba(0,0,0,.25);
+      margin-bottom: .3rem; line-height: 1;
+    }
+    .hero-tagline {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(.95rem, 3vw, 1.2rem); opacity: .9; margin-bottom: .35rem;
+    }
+    .hero-sub { font-size: .88rem; opacity: .72; margin-bottom: 2.8rem; font-weight: 300; }
+    .hero-btns { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      padding: .85rem 2rem; border-radius: 50px; font-size: .86rem; font-weight: 700;
+      cursor: pointer; transition: all .25s; text-decoration: none;
+      letter-spacing: .5px; border: 2px solid transparent;
+      display: inline-flex; align-items: center; gap: .4rem; font-family: inherit;
+    }
+    .btn-white { background: #fff; color: var(--terra); border-color: #fff; }
+    .btn-white:hover { background: transparent; color: #fff; }
+    .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.6); }
+    .btn-ghost:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.9); }
+    .scroll-hint {
+      position: absolute; bottom: 1.8rem; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,.5); font-size: .65rem; letter-spacing: 3px;
+      display: flex; flex-direction: column; align-items: center; gap: .3rem;
+    }
+    .scroll-hint::after {
+      content:''; width:1px; height:36px;
+      background: linear-gradient(to bottom, rgba(255,255,255,.5), transparent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── LAYOUT ── */
+    section { padding: 5rem 0; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem; }
+    .eyebrow { font-size: .7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--terra); margin-bottom: .55rem; font-weight: 700; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 2.6rem); color: var(--brown); margin-bottom: .8rem; line-height: 1.2; }
+    .section-desc { font-size: .93rem; color: var(--brown-light); max-width: 540px; line-height: 1.85; }
+    .divider { width: 44px; height: 3px; background: var(--terra); border-radius: 2px; margin: .8rem 0 1.4rem; }
+
+    /* ── ABOUT ── */
+    #about { background: #fff; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-photo {
+      border-radius: 20px; overflow: hidden; aspect-ratio: 4/3;
+      position: relative;
+      /* CSS gradient always visible */
+      background: linear-gradient(135deg, #E8C896 0%, #D9856A 50%, #C4714A 100%);
+    }
+    .about-photo::before {
+      content: '🏡';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      /* hidden when real photo loads */
+    }
+    .about-photo img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0; transition: opacity .5s;
+    }
+    .about-photo img.on { opacity: 1; }
+    .about-photo::before { display: flex; } /* always show emoji until img loads */
+    .feats { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.8rem; }
+    .feat { background: var(--sand); color: var(--brown); padding: .3rem .9rem; border-radius: 20px; font-size: .8rem; font-weight: 500; }
+
+    /* ── SPACES ── */
+    #spaces { background: var(--cream); }
+    .filter-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .filter-btn {
+      padding: .4rem 1.1rem; border: 1.5px solid var(--gold);
+      background: transparent; color: var(--brown);
+      border-radius: 24px; cursor: pointer; font-size: .8rem; font-weight: 600;
+      transition: all .2s; font-family: inherit;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--terra); border-color: var(--terra); color: #fff; }
+    .spaces-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; }
+
+    /* Card */
+    .space-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 3px 18px var(--shadow);
+      transition: transform .28s, box-shadow .28s; cursor: pointer;
+    }
+    .space-card:hover { transform: translateY(-5px); box-shadow: 0 10px 36px rgba(61,43,31,.14); }
+
+    /* Thumb — gradient is the base, photo overlays on top */
+    .thumb {
+      aspect-ratio: 4/3; position: relative; overflow: hidden;
+      display: flex; align-items: flex-end;
+    }
+    /* Gradient backgrounds per type */
+    .t-yard     { background: linear-gradient(155deg, #8EC5AD 0%, #3D8B68 100%); }
+    .t-dining   { background: linear-gradient(155deg, #E0906E 0%, #B5512A 100%); }
+    .t-bed1     { background: linear-gradient(155deg, #D4804E 0%, #9B4020 100%); }
+    .t-bed2     { background: linear-gradient(155deg, #E2B47A 0%, #C07C3A 100%); }
+    .t-bed3     { background: linear-gradient(155deg, #EDD29A 0%, #C9A040 100%); }
+    .t-bed4     { background: linear-gradient(155deg, #C87050 0%, #883020 100%); }
+    .t-bed5     { background: linear-gradient(155deg, #D89060 0%, #A85020 100%); }
+    .t-bed6     { background: linear-gradient(155deg, #E8B870 0%, #C07030 100%); }
+    .t-living1  { background: linear-gradient(155deg, #A898B4 0%, #7A6890 100%); }
+    .t-living2  { background: linear-gradient(155deg, #98B0C0 0%, #5878A0 100%); }
+    .t-meal1    { background: linear-gradient(155deg, #F0A86A 0%, #C06030 100%); }
+    .t-meal2    { background: linear-gradient(155deg, #E8785A 0%, #A03820 100%); }
+    .t-meal3    { background: linear-gradient(155deg, #D4B870 0%, #A08030 100%); }
+    .t-meal4    { background: linear-gradient(155deg, #8FC898 0%, #3D8850 100%); }
+
+    /* Subtle pattern overlay */
+    .thumb::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(255,255,255,.15) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,0,0,.1) 0%, transparent 50%);
+    }
+
+    /* Icon centered */
+    .thumb-icon {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .35rem;
+      color: rgba(255,255,255,.92);
+      transition: transform .3s;
+    }
+    .space-card:hover .thumb-icon { transform: scale(1.06); }
+    .thumb-icon .icon { font-size: 2.6rem; }
+    .thumb-icon .label {
+      font-family: 'Playfair Display', serif;
+      font-size: .78rem; letter-spacing: 1.5px;
+      text-transform: uppercase; opacity: .85;
+    }
+
+    /* Real photo overlays gradient — starts invisible */
+    .thumb img {
+      position: absolute; inset: 0; z-index: 3;
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity .5s, transform .5s;
+    }
+    .thumb img.on { opacity: 1; }
+    .space-card:hover .thumb img.on { transform: scale(1.05); }
+
+    /* Bottom overlay strip when photo is showing */
+    .thumb-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+      background: linear-gradient(to top, rgba(0,0,0,.55), transparent);
+      padding: .7rem .9rem .55rem;
+      display: flex; align-items: flex-end;
+      opacity: 0; transition: opacity .3s;
+    }
+    .thumb img.on ~ .thumb-bar { opacity: 1; }
+    .thumb-bar span {
+      color: #fff; font-size: .75rem; font-weight: 600; letter-spacing: .5px;
+    }
+
+    .card-body { padding: 1.1rem 1.4rem 1.4rem; }
+    .card-badge {
+      display: inline-block; background: var(--sand); color: var(--terra);
+      font-size: .68rem; font-weight: 700; padding: .15rem .65rem;
+      border-radius: 9px; margin-bottom: .38rem; letter-spacing: .4px;
+    }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 1.08rem; color: var(--brown); margin-bottom: .3rem; }
+    .card-desc { font-size: .82rem; color: var(--brown-light); line-height: 1.62; }
+    .card-more { font-size: .78rem; color: var(--terra); font-weight: 600; margin-top: .45rem; display: inline-block; }
+
+    /* ── GALLERY STRIP ── */
+    #gallery { overflow: hidden; }
+    .gallery-strip { display: flex; height: 240px; }
+    .gstrip-item {
+      flex: 1; min-width: 0; overflow: hidden; position: relative;
+      transition: flex .4s ease;
+    }
+    .gstrip-item:hover { flex: 1.6; }
+    .gstrip-bg {
+      width: 100%; height: 100%; transition: transform .4s;
+    }
+    .gstrip-item:hover .gstrip-bg { transform: scale(1.05); }
+    .gstrip-item img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0; transition: opacity .5s;
+    }
+    .gstrip-item img.on { opacity: 1; }
+    .g1 { background: linear-gradient(135deg, #C4714A, #8B3A1A); }
+    .g2 { background: linear-gradient(135deg, #D9856A, #B05030); }
+    .g3 { background: linear-gradient(135deg, #7DB39A, #3D7A60); }
+    .g4 { background: linear-gradient(135deg, #E8C896, #C07030); }
+    .g5 { background: linear-gradient(135deg, #8FA0B5, #4A6080); }
+
+    /* ── RESERVATION ── */
+    #reservation { background: var(--sand); }
+    .res-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3.5rem; align-items: start; }
+    .contact-list { display: flex; flex-direction: column; gap: .8rem; margin-top: 1.6rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .9rem 1.1rem; background: #fff;
+      border-radius: 12px; box-shadow: 0 2px 10px var(--shadow);
+      text-decoration: none; color: var(--brown); transition: all .2s;
+    }
+    .contact-item:hover { transform: translateX(4px); box-shadow: 0 5px 20px rgba(61,43,31,.12); }
+    .ci-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+    .ci-kakao { background: #FEE500; }
+    .ci-wa    { background: #25D366; }
+    .ci-tel   { background: var(--sand); }
+    .ci-label { font-size: .7rem; color: var(--brown-light); }
+    .ci-val   { font-weight: 700; font-size: .88rem; }
+    .form-box { background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 5px 30px var(--shadow); }
+    .form-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 1.4rem; }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    .fg { margin-bottom: .9rem; }
+    .fg label { display: block; font-size: .76rem; font-weight: 700; color: var(--brown); margin-bottom: .3rem; }
+    .fg input, .fg select, .fg textarea {
+      width: 100%; padding: .68rem .9rem;
+      border: 1.5px solid #E8DDD5; border-radius: 9px;
+      font-size: .87rem; color: var(--brown); background: var(--cream);
+      transition: border-color .2s; font-family: inherit; outline: none; appearance: none;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--terra); }
+    .fg textarea { resize: vertical; min-height: 88px; }
+    .btn-send {
+      width: 100%; padding: .95rem; background: var(--terra); color: #fff;
+      border: none; border-radius: 11px; font-size: .92rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .btn-send:hover { background: var(--terra-dark); transform: translateY(-1px); box-shadow: 0 5px 16px rgba(196,113,74,.28); }
+
+    /* ── INQUIRY ── */
+    #inquiry { background: #fff; }
+    .inq-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; }
+    .board { display: flex; flex-direction: column; gap: .65rem; }
+    .board-item {
+      padding: .9rem 1.1rem; background: var(--cream); border-radius: 10px;
+      border-left: 3px solid var(--terra); cursor: pointer; transition: background .2s;
+    }
+    .board-item:hover { background: var(--sand); }
+    .bi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: .2rem; }
+    .bi-title { font-weight: 600; font-size: .86rem; }
+    .bi-date  { font-size: .7rem; color: var(--brown-light); opacity: .7; }
+    .bi-preview { font-size: .78rem; color: var(--brown-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bi-tag { font-size: .66rem; padding: .1rem .5rem; border-radius: 7px; font-weight: 700; margin-left: .4rem; flex-shrink: 0; background: #FEF3C7; color: #92400E; }
+    .board-empty { text-align: center; padding: 1.5rem 1rem; color: var(--brown-light); opacity: .45; }
+    .board-empty .icon { font-size: 2.2rem; display: block; margin-bottom: .5rem; }
+
+    /* ── LOCATION ── */
+    #location { background: var(--cream); }
+    .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; }
+    .map-btn {
+      aspect-ratio: 4/3; border-radius: 20px; overflow: hidden;
+      position: relative; display: block; text-decoration: none;
+      background: linear-gradient(135deg, #6EA892, #3D7A65);
+    }
+    .map-btn img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0; transition: opacity .5s; filter: brightness(.75);
+    }
+    .map-btn img.on { opacity: 1; }
+    .map-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .8rem;
+      color: #fff; text-align: center;
+    }
+    .map-overlay .icon { font-size: 2.8rem; }
+    .map-overlay .title { font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+    .map-overlay .hint { font-size: .78rem; opacity: .75; }
+    .loc-items { display: flex; flex-direction: column; gap: 1.4rem; }
+    .loc-item { display: flex; gap: .9rem; align-items: flex-start; }
+    .loc-item .icon { font-size: 1.4rem; flex-shrink: 0; }
+    .loc-item h4 { font-size: .86rem; font-weight: 700; margin-bottom: .18rem; }
+    .loc-item p { font-size: .82rem; color: var(--brown-light); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--brown); color: rgba(255,255,255,.6); padding: 3rem 0 1.8rem; text-align: center; }
+    .foot-logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); letter-spacing: 5px; margin-bottom: .3rem; }
+    .foot-tag { font-size: .8rem; opacity: .5; margin-bottom: 1.8rem; }
+    .foot-links { display: flex; gap: 1.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.8rem; }
+    .foot-links a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .8rem; transition: color .2s; }
+    .foot-links a:hover { color: var(--gold); }
+    .foot-copy { font-size: .72rem; opacity: .3; border-top: 1px solid rgba(255,255,255,.08); padding-top: 1.4rem; margin-top: .8rem; }
+
+    /* ── FLOATS ── */
+    .floats { position: fixed; bottom: 1.8rem; right: 1.5rem; display: flex; flex-direction: column; gap: .65rem; z-index: 800; }
+    .fab {
+      width: 50px; height: 50px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,.18); text-decoration: none;
+      font-size: 1.3rem; transition: all .22s; border: none; cursor: pointer;
+    }
+    .fab:hover { transform: scale(1.12); }
+    .fab-ka  { background: #FEE500; }
+    .fab-wa  { background: #25D366; }
+    .fab-top { background: var(--terra); color: #fff; font-size: .9rem; }
+
+    /* ── LIGHTBOX ── */
+    .lb-ov {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.82); z-index: 1500;
+      align-items: center; justify-content: center; padding: 1.2rem;
+    }
+    .lb-ov.open { display: flex; }
+    .lb-box { background: #fff; border-radius: 20px; max-width: 540px; width: 100%; overflow: hidden; position: relative; }
+    .lb-thumb {
+      aspect-ratio: 4/3; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-thumb-icon { font-size: 3.5rem; color: rgba(255,255,255,.88); z-index: 2; position: relative; }
+    .lb-thumb img {
+      position: absolute; inset: 0; z-index: 3;
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity .4s;
+    }
+    .lb-thumb img.on { opacity: 1; }
+    .lb-body { padding: 1.4rem; }
+    .lb-badge { display: inline-block; background: var(--sand); color: var(--terra); font-size: .68rem; font-weight: 700; padding: .15rem .65rem; border-radius: 9px; margin-bottom: .45rem; }
+    .lb-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: .45rem; }
+    .lb-desc  { font-size: .86rem; color: var(--brown-light); line-height: 1.7; }
+    .lb-close {
+      position: absolute; top: .8rem; right: .8rem;
+      background: rgba(0,0,0,.4); color: #fff; border: none;
+      border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: .95rem;
+    }
+
+    /* ── MODAL ── */
+    .mo-ov {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 1500;
+      align-items: center; justify-content: center; padding: 1.2rem;
+    }
+    .mo-ov.open { display: flex; }
+    .mo-box { background: #fff; border-radius: 18px; max-width: 500px; width: 100%; padding: 1.8rem; position: relative; }
+    .mo-close { position: absolute; top: .9rem; right: .9rem; background: var(--sand); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+    .mo-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: .25rem; }
+    .mo-meta  { font-size: .76rem; color: var(--brown-light); margin-bottom: .9rem; }
+    .mo-body  { font-size: .88rem; line-height: 1.72; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 1.8rem; left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: var(--brown); color: #fff;
+      padding: .85rem 1.8rem; border-radius: 50px; font-size: .86rem;
+      z-index: 2000; transition: transform .3s; pointer-events: none;
+      box-shadow: 0 4px 22px rgba(0,0,0,.18);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 3rem 0; }
+      .about-grid, .res-grid, .inq-grid, .loc-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+      .frow { grid-template-columns: 1fr; }
+      .spaces-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .gallery-strip { height: 160px; }
+    }
+    @media (max-width: 540px) {
+      section { padding: 2.2rem 0; }
+      .hero-title { letter-spacing: 4px; }
+      .spaces-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .gallery-strip { height: 110px; }
+      .floats { bottom: 1.2rem; right: 1rem; }
+      .form-box { padding: 1.2rem; }
+      footer { padding: 2rem 0 5.5rem; }
+    }
+    @media (max-width: 360px) {
+      .spaces-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><img src="images/logo.jpg" alt="Hue Stay"></a>
+  <ul class="nav-links">
+    <li><a href="#about"       data-ko="소개"  data-en="About">소개</a></li>
+    <li><a href="#spaces"      data-ko="공간"  data-en="Spaces">공간</a></li>
+    <li><a href="#reservation" data-ko="예약"  data-en="Reserve">예약</a></li>
+    <li><a href="#inquiry"     data-ko="문의"  data-en="Inquiry">문의</a></li>
+    <li><a href="#location"    data-ko="위치"  data-en="Location">위치</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="ko">KO</button>
+      <button class="lang-btn"        data-lang="en">EN</button>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about"       onclick="closeMobile()" data-ko="소개"  data-en="About">소개</a>
+  <a href="#spaces"      onclick="closeMobile()" data-ko="공간"  data-en="Spaces">공간</a>
+  <a href="#reservation" onclick="closeMobile()" data-ko="예약"  data-en="Reserve">예약</a>
+  <a href="#inquiry"     onclick="closeMobile()" data-ko="문의"  data-en="Inquiry">문의</a>
+  <a href="#location"    onclick="closeMobile()" data-ko="위치"  data-en="Location">위치</a>
+  <div class="mobile-lang">
+    <button class="active" onclick="setLang('ko')">한국어</button>
+    <button onclick="setLang('en')">English</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Saudi Arabia · Riyadh · Guesthouse</p>
+    <h1 class="hero-title">HUE STAY</h1>
+    <p class="hero-tagline">Where Every Shade Feels Like Home</p>
+    <p class="hero-sub" data-ko="사우디아라비아에서 경험하는 따뜻한 한국의 감성" data-en="A warm Korean touch in the heart of Saudi Arabia">사우디아라비아에서 경험하는 따뜻한 한국의 감성</p>
+    <div class="hero-btns">
+      <a href="#reservation" class="btn btn-white" data-ko="예약 문의하기" data-en="Book Now">예약 문의하기</a>
+      <a href="#spaces"      class="btn btn-ghost" data-ko="공간 둘러보기" data-en="Explore Spaces">공간 둘러보기</a>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-photo">
+        <img src="images/about.jpg" alt="Hue Stay" onload="this.classList.add('on')" onerror="this.remove()">
+      </div>
+      <div>
+        <p class="eyebrow">ABOUT US</p>
+        <h2 class="section-title" data-ko="사우디의 하늘 아래,<br>한국의 따뜻함을" data-en="Korean Warmth<br>Under Saudi Skies">사우디의 하늘 아래,<br>한국의 따뜻함을</h2>
+        <div class="divider"></div>
+        <p class="section-desc" data-ko="Hue Stay는 사우디아라비아에 머무는 한국인들을 위한 아늑한 게스트하우스입니다. 6개의 개성 있는 침실, 2개의 넓은 거실, 아름다운 마당, 그리고 정성스러운 한국 식사까지 — 낯선 땅에서도 집처럼 편안하게 쉬어가실 수 있습니다." data-en="Hue Stay is a cozy guesthouse for Koreans in Saudi Arabia. Six bedrooms, two living rooms, a beautiful yard, and Korean home-style meals — rest easy even in an unfamiliar land.">
+          Hue Stay는 사우디아라비아에 머무는 한국인들을 위한 아늑한 게스트하우스입니다. 6개의 개성 있는 침실, 2개의 넓은 거실, 아름다운 마당, 그리고 정성스러운 한국 식사까지 — 낯선 땅에서도 집처럼 편안하게 쉬어가실 수 있습니다.
+        </p>
+        <div class="feats">
+          <span class="feat" data-ko="침실 6실" data-en="6 Bedrooms">침실 6실</span>
+          <span class="feat" data-ko="거실 2개" data-en="2 Living Rooms">거실 2개</span>
+          <span class="feat" data-ko="한국 식당" data-en="Korean Dining">한국 식당</span>
+          <span class="feat" data-ko="야외 마당" data-en="Garden Yard">야외 마당</span>
+          <span class="feat" data-ko="한국어 OK" data-en="Korean Spoken">한국어 OK</span>
+          <span class="feat" data-ko="무료 Wi-Fi" data-en="Free Wi-Fi">무료 Wi-Fi</span>
+          <span class="feat" data-ko="에어컨" data-en="A/C">에어컨</span>
+          <span class="feat" data-ko="픽업 가능" data-en="Pickup">픽업 가능</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPACES -->
+<section id="spaces">
+  <div class="container">
+    <p class="eyebrow">OUR SPACES</p>
+    <h2 class="section-title" data-ko="모든 공간이 이야기를 담습니다" data-en="Every Space Tells a Story">모든 공간이 이야기를 담습니다</h2>
+    <div class="divider"></div>
+    <div class="filter-row">
+      <button class="filter-btn active" data-filter="all"     data-ko="전체"  data-en="All">전체</button>
+      <button class="filter-btn"        data-filter="outdoor" data-ko="야외"  data-en="Outdoor">야외</button>
+      <button class="filter-btn"        data-filter="dining"  data-ko="식당"  data-en="Dining">식당</button>
+      <button class="filter-btn"        data-filter="bedroom" data-ko="침실"  data-en="Bedrooms">침실</button>
+      <button class="filter-btn"        data-filter="living"  data-ko="거실"  data-en="Living">거실</button>
+      <button class="filter-btn"        data-filter="meal"    data-ko="식사"  data-en="Meals">식사</button>
+    </div>
+    <div class="spaces-grid" id="spacesGrid"></div>
+  </div>
+</section>
+
+<!-- GALLERY STRIP -->
+<div id="gallery">
+  <div class="gallery-strip">
+    <div class="gstrip-item"><div class="gstrip-bg g1"></div><img src="images/gallery1.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g2"></div><img src="images/gallery2.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g3"></div><img src="images/gallery3.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g4"></div><img src="images/gallery4.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g5"></div><img src="images/gallery5.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+  </div>
+</div>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="container">
+    <p class="eyebrow">RESERVATION</p>
+    <h2 class="section-title" data-ko="예약 및 문의" data-en="Book Your Stay">예약 및 문의</h2>
+    <div class="divider"></div>
+    <div class="res-grid">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem" data-ko="실시간으로 연락하세요" data-en="Get in Touch">실시간으로 연락하세요</h3>
+        <p style="font-size:.86rem;color:var(--brown-light);line-height:1.8" data-ko="카카오톡·왓츠앱으로 빠르게 예약하거나 아래 양식을 작성해주세요. 24시간 내 답변드립니다." data-en="Book via KakaoTalk or WhatsApp, or fill in the form. We reply within 24 hours.">카카오톡·왓츠앱으로 빠르게 예약하거나 아래 양식을 작성해주세요. 24시간 내 답변드립니다.</p>
+        <div class="contact-list">
+          <a href="https://open.kakao.com/o/search#perfectjjong" target="_blank" class="contact-item">
+            <div class="ci-icon ci-kakao">💬</div>
+            <div><div class="ci-label" data-ko="카카오톡" data-en="KakaoTalk">카카오톡</div><div class="ci-val">perfectjjong</div></div>
+          </a>
+          <a href="https://wa.me/966569814239" target="_blank" class="contact-item">
+            <div class="ci-icon ci-wa">📱</div>
+            <div><div class="ci-label" data-ko="왓츠앱" data-en="WhatsApp">왓츠앱</div><div class="ci-val">+966-56-981-4239</div></div>
+          </a>
+          <a href="tel:+966981-4239" class="contact-item">
+            <div class="ci-icon ci-tel">📞</div>
+            <div><div class="ci-label" data-ko="전화" data-en="Phone">전화</div><div class="ci-val">+966-981-4239</div></div>
+          </a>
+        </div>
+      </div>
+      <div class="form-box">
+        <p class="form-title" data-ko="예약 신청서" data-en="Reservation Form">예약 신청서</p>
+        <form onsubmit="submitRes(event)">
+          <div class="frow">
+            <div class="fg"><label data-ko="이름" data-en="Name">이름</label><input type="text" name="name" required data-ko="홍길동" data-en="John Smith" placeholder="홍길동"></div>
+            <div class="fg"><label data-ko="연락처" data-en="Contact">연락처</label><input type="text" name="contact" required data-ko="+82-10-XXXX-XXXX" data-en="+966-XX-XXXX-XXXX" placeholder="+82-10-XXXX-XXXX"></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
+            <div class="fg"><label data-ko="회사명" data-en="Company">회사명</label><input type="text" name="company" data-ko="회사명 (선택)" data-en="Company (optional)" placeholder="회사명 (선택)"></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label data-ko="체크인" data-en="Check-in">체크인</label><input type="date" name="checkin" required></div>
+            <div class="fg"><label data-ko="체크아웃" data-en="Check-out">체크아웃</label><input type="date" name="checkout" required></div>
+          </div>
+          <div class="fg">
+            <label data-ko="인원" data-en="Guests">인원</label>
+            <select name="guests">
+              <option>1명</option><option>2명</option><option>3명</option><option>4명</option><option>5명 이상</option>
+            </select>
+          </div>
+          <div class="fg"><label data-ko="문의 사항" data-en="Message">문의 사항</label><textarea name="message" data-ko="요청사항을 적어주세요" data-en="Enter your requests here" placeholder="요청사항을 적어주세요"></textarea></div>
+          <button type="submit" class="btn-send" data-ko="예약 신청하기" data-en="Submit Request">예약 신청하기</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INQUIRY -->
+<section id="inquiry">
+  <div class="container">
+    <p class="eyebrow">INQUIRY BOARD</p>
+    <h2 class="section-title" data-ko="문의 게시판" data-en="Inquiry Board">문의 게시판</h2>
+    <div class="divider"></div>
+    <div class="inq-grid">
+      <div>
+        <p style="font-size:.8rem;color:var(--brown-light);margin-bottom:1rem" data-ko="접수된 문의입니다. 답변은 카카오톡·왓츠앱으로도 드립니다." data-en="Submitted inquiries. We also reply via KakaoTalk/WhatsApp.">접수된 문의입니다. 답변은 카카오톡·왓츠앱으로도 드립니다.</p>
+        <div class="board" id="boardList"></div>
+      </div>
+      <div class="form-box">
+        <p class="form-title" data-ko="문의 남기기" data-en="Leave an Inquiry">문의 남기기</p>
+        <form onsubmit="submitInquiry(event)">
+          <div class="frow">
+            <div class="fg"><label data-ko="이름" data-en="Name">이름</label><input type="text" name="name" required data-ko="홍길동" data-en="John Smith" placeholder="홍길동"></div>
+            <div class="fg"><label data-ko="회사명" data-en="Company">회사명</label><input type="text" name="company" data-ko="회사명 (선택)" data-en="Company (optional)" placeholder="회사명 (선택)"></div>
+          </div>
+          <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
+          <div class="fg"><label data-ko="제목" data-en="Subject">제목</label><input type="text" name="subject" required data-ko="문의 제목" data-en="Inquiry subject" placeholder="문의 제목"></div>
+          <div class="fg"><label data-ko="내용" data-en="Message">내용</label><textarea name="message" required data-ko="내용을 적어주세요" data-en="Enter your message" placeholder="내용을 적어주세요"></textarea></div>
+          <button type="submit" class="btn-send" data-ko="문의 등록" data-en="Submit">문의 등록</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location">
+  <div class="container">
+    <p class="eyebrow">LOCATION</p>
+    <h2 class="section-title" data-ko="찾아오시는 길" data-en="How to Find Us">찾아오시는 길</h2>
+    <div class="divider"></div>
+    <div class="loc-grid">
+      <a class="map-btn" href="https://maps.app.goo.gl/JonpWNC3BM192m7dA" target="_blank">
+        <img src="images/map.jpg" onload="this.classList.add('on')" onerror="this.remove()">
+        <div class="map-overlay">
+          <div class="icon">🗺️</div>
+          <div class="title" data-ko="지도에서 보기" data-en="View on Map">지도에서 보기</div>
+          <div class="hint" data-ko="Google Maps에서 열립니다" data-en="Opens in Google Maps">Google Maps에서 열립니다</div>
+        </div>
+      </a>
+      <div class="loc-items">
+        <div class="loc-item"><div class="icon">📍</div><div><h4 data-ko="위치" data-en="Location">위치</h4><p data-ko="사우디아라비아 리야드<br>지도에서 정확한 위치를 확인하세요." data-en="Riyadh, Saudi Arabia<br>See exact location on the map.">사우디아라비아 리야드<br>지도에서 정확한 위치를 확인하세요.</p></div></div>
+        <div class="loc-item"><div class="icon">🕐</div><div><h4 data-ko="체크인/체크아웃" data-en="Check-in / Check-out">체크인/체크아웃</h4><p data-ko="체크인: 오후 3시 이후<br>체크아웃: 오전 11시 이전" data-en="Check-in: After 3:00 PM<br>Check-out: Before 11:00 AM">체크인: 오후 3시 이후<br>체크아웃: 오전 11시 이전</p></div></div>
+        <div class="loc-item"><div class="icon">📞</div><div><h4 data-ko="연락처" data-en="Contact">연락처</h4><p>KakaoTalk: perfectjjong<br>WhatsApp: +966-56-981-4239</p></div></div>
+        <div class="loc-item"><div class="icon">🚗</div><div><h4 data-ko="교통" data-en="Transport">교통</h4><p data-ko="사전 연락 시 픽업 안내·주차 가능" data-en="Pickup on request · Parking available">사전 연락 시 픽업 안내·주차 가능</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-logo"><img src="images/logo.jpg" alt="Hue Stay" style="height:56px;width:auto;filter:invert(1) brightness(1.8);"></div>
+    <div class="foot-tag">Where Every Shade Feels Like Home</div>
+    <div class="foot-links">
+      <a href="#about"       data-ko="소개"  data-en="About">소개</a>
+      <a href="#spaces"      data-ko="공간"  data-en="Spaces">공간</a>
+      <a href="#reservation" data-ko="예약"  data-en="Reserve">예약</a>
+      <a href="#inquiry"     data-ko="문의"  data-en="Inquiry">문의</a>
+      <a href="#location"    data-ko="위치"  data-en="Location">위치</a>
+    </div>
+    <div class="foot-copy">© 2025 Hue Stay · perfectjjong@gmail.com</div>
+  </div>
+</footer>
+
+<!-- FLOATS -->
+<div class="floats">
+  <a href="https://open.kakao.com/o/search#perfectjjong" target="_blank" class="fab fab-ka" title="KakaoTalk">💬</a>
+  <a href="https://wa.me/966569814239" target="_blank" class="fab fab-wa" title="WhatsApp">📱</a>
+  <button class="fab fab-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb-ov" id="lbOv" onclick="closeLb(event)">
+  <div class="lb-box">
+    <button class="lb-close" onclick="closeLb()">✕</button>
+    <div class="lb-thumb" id="lbThumb"></div>
+    <div class="lb-body">
+      <span class="lb-badge" id="lbBadge"></span>
+      <h3 class="lb-title" id="lbTitle"></h3>
+      <p class="lb-desc"  id="lbDesc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mo-ov" id="moOv" onclick="closeMo(event)">
+  <div class="mo-box">
+    <button class="mo-close" onclick="closeMo()">✕</button>
+    <h3 class="mo-title" id="moTitle"></h3>
+    <p class="mo-meta"  id="moMeta"></p>
+    <p class="mo-body"  id="moBody"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── SPACES DATA
+   사진 추가 방법: images/spaces/ 폴더에 파일명에 맞게 저장하면 자동 표시
+   예) images/spaces/yard.jpg, images/spaces/bed1.jpg 등
+── */
+const SPACES = [
+  { id:'yard',   cat:'outdoor', tc:'t-yard',    img:'images/spaces/yard.jpg',    emoji:'🌿', bKo:'야외 공간', bEn:'Outdoor',   nKo:'마당',      nEn:'Garden Yard',      dKo:'탁 트인 하늘 아래 펼쳐지는 야외 마당. 아침 커피 한 잔과 함께 여유를 즐기거나 저녁 노을을 감상하기 좋습니다.',         dEn:'A beautiful outdoor yard under the open sky. Perfect for morning coffee or watching the evening sunset.' },
+  { id:'dining', cat:'dining',  tc:'t-dining',  img:'images/spaces/dining.jpg',  emoji:'🍽️', bKo:'식당',     bEn:'Dining',    nKo:'다이닝룸',  nEn:'Dining Room',      dKo:'정성스러운 한국 가정식이 제공되는 식사 공간. 매일 조식이 준비되며 한국의 맛을 사우디에서 느껴보세요.',          dEn:'Korean home-style meals served daily. Enjoy the taste of home in the heart of Saudi Arabia.' },
+  { id:'bed1',   cat:'bedroom', tc:'t-bed1',    img:'images/spaces/bed1.jpg',    emoji:'🛏️', bKo:'침실 1',   bEn:'Room 101',  nKo:'침실 101',  nEn:'Bedroom 101',      dKo:'따뜻한 톤의 더블베드룸. 에어컨과 개인 욕실 완비. 프라이빗한 휴식 공간.',                                         dEn:'Warm-toned double bedroom with A/C and private bathroom.' },
+  { id:'bed2',   cat:'bedroom', tc:'t-bed2',    img:'images/spaces/bed2.jpg',    emoji:'🛏️', bKo:'침실 2',   bEn:'Room 102',  nKo:'침실 102',  nEn:'Bedroom 102',      dKo:'트윈베드 구성. 두 분이 편안하게 사용할 수 있는 넉넉한 공간.',                                                       dEn:'Twin bed setup, spacious enough for two guests.' },
+  { id:'bed3',   cat:'bedroom', tc:'t-bed3',    img:'images/spaces/bed3.jpg',    emoji:'🛏️', bKo:'침실 3',   bEn:'Room 103',  nKo:'침실 103',  nEn:'Bedroom 103',      dKo:'혼자 조용히 쉬기에 최적인 싱글룸. 아늑하고 아담한 나만의 공간.',                                                    dEn:'A cozy single room perfect for solo travelers.' },
+  { id:'bed4',   cat:'bedroom', tc:'t-bed4',    img:'images/spaces/bed4.jpg',    emoji:'🛏️', bKo:'침실 4',   bEn:'Room 104',  nKo:'침실 104',  nEn:'Bedroom 104',      dKo:'마당이 보이는 더블룸. 자연광이 풍부하고 아침 풍경이 아름답습니다.',                                                  dEn:'Double room overlooking the yard. Abundant natural light.' },
+  { id:'bed5',   cat:'bedroom', tc:'t-bed5',    img:'images/spaces/bed5.jpg',    emoji:'🛏️', bKo:'침실 5',   bEn:'Room 105',  nKo:'침실 105',  nEn:'Bedroom 105',      dKo:'가족 단위에 적합한 트리플룸. 여러 명이 함께 편안하게 지낼 수 있습니다.',                                            dEn:'Triple room ideal for families or small groups.' },
+  { id:'bed6',   cat:'bedroom', tc:'t-bed6',    img:'images/spaces/bed6.jpg',    emoji:'🛏️', bKo:'침실 6',   bEn:'Room 106',  nKo:'침실 106',  nEn:'Bedroom 106',      dKo:'프리미엄 더블룸. 독립된 구조로 최상의 프라이버시. 가장 인기 있는 객실.',                                            dEn:'Premium double room with maximum privacy. Most popular.' },
+  { id:'liv1',   cat:'living',  tc:'t-living1', img:'images/spaces/living1.jpg', emoji:'🛋️', bKo:'거실 1',   bEn:'Living 1',  nKo:'메인 거실', nEn:'Main Living Room',  dKo:'넓고 시원한 공용 거실. 소파, TV, 도서, 보드게임을 갖추고 있어 편안하게 쉬어갈 수 있습니다.',                       dEn:'Spacious common living room with sofa, TV, books, and board games.' },
+  { id:'liv2',   cat:'living',  tc:'t-living2', img:'images/spaces/tv_room.jpg', emoji:'📺', bKo:'거실 2',   bEn:'Living 2',  nKo:'TV 거실',   nEn:'TV Lounge',          dKo:'대형 TV와 기타가 있는 아늑한 두 번째 거실. 작은 모임이나 여가 시간을 즐기기 좋습니다.',                            dEn:'Cozy lounge with a large TV and guitar, perfect for relaxing evenings.' },
+  { id:'meal1',  cat:'meal',    tc:'t-meal1',   img:'',                          emoji:'🍚', bKo:'식사',     bEn:'Meals',     nKo:'조식',      nEn:'Breakfast',         dKo:'매일 아침 정성껏 준비한 한국식 조식. 따뜻한 밥과 국, 반찬으로 하루를 시작하세요.',                                     dEn:'Korean-style breakfast served every morning. Start your day with warm rice, soup, and side dishes.' },
+  { id:'meal2',  cat:'meal',    tc:'t-meal2',   img:'',                          emoji:'🥘', bKo:'식사',     bEn:'Meals',     nKo:'한식 정식', nEn:'Korean Set Meal',   dKo:'깊은 맛의 한식 정식. 찌개·구이·나물 등 집밥 그대로의 풍성한 한 끼를 즐기실 수 있습니다.',                             dEn:'Full Korean set meal with stew, grilled dishes, and seasoned vegetables — just like home.' },
+  { id:'meal3',  cat:'meal',    tc:'t-meal3',   img:'',                          emoji:'☕', bKo:'음료',     bEn:'Drinks',    nKo:'커피 & 음료', nEn:'Coffee & Drinks',  dKo:'에스프레소 머신과 다양한 티, 음료를 24시간 자유롭게 이용하실 수 있습니다.',                                             dEn:'Espresso machine, teas, and beverages available 24 hours.' },
+  { id:'meal4',  cat:'meal',    tc:'t-meal4',   img:'',                          emoji:'🥗', bKo:'건강식',   bEn:'Healthy',   nKo:'샐러드 & 간식', nEn:'Salad & Snacks', dKo:'신선한 샐러드와 과일, 한국 간식류를 상시 비치. 가벼운 식사도 걱정 없습니다.',                                         dEn:'Fresh salad, fruit, and Korean snacks available anytime.' },
+];
+
+let lang = 'ko';
+let filter = 'all';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-ko]').forEach(el => {
+    const v = el.getAttribute('data-' + l);
+    if (!v) return;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = v;
+    } else {
+      el.innerHTML = v;
+    }
+  });
+  // Guests select options
+  const gSel = document.querySelector('select[name="guests"]');
+  if (gSel) {
+    const cur = gSel.selectedIndex;
+    const opts = l === 'ko'
+      ? ['1명','2명','3명','4명','5명 이상']
+      : ['1 Person','2 People','3 People','4 People','5+ People'];
+    gSel.innerHTML = opts.map(o => `<option>${o}</option>`).join('');
+    gSel.selectedIndex = Math.max(0, cur);
+  }
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  document.querySelectorAll('.mobile-lang button').forEach((b,i) => b.classList.toggle('active', (i===0&&l==='ko')||(i===1&&l==='en')));
+  document.querySelectorAll('.filter-btn').forEach(b => { const v = b.getAttribute('data-'+l); if(v) b.textContent = v; });
+  renderSpaces();
+  renderBoard();
+}
+
+/* NAV */
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 30));
+document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
+document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+/* SPACES */
+function renderSpaces() {
+  const list = filter === 'all' ? SPACES : SPACES.filter(s => s.cat === filter);
+  document.getElementById('spacesGrid').innerHTML = list.map(s => `
+    <div class="space-card" onclick="openLb('${s.id}')">
+      <div class="thumb ${s.tc}">
+        <div class="thumb-icon"><div class="icon">${s.emoji}</div><div class="label">${lang==='ko'?s.nKo:s.nEn}</div></div>
+        <img src="${s.img}" alt="${lang==='ko'?s.nKo:s.nEn}" onload="this.classList.add('on')" onerror="this.remove()">
+        <div class="thumb-bar"><span>${lang==='ko'?s.nKo:s.nEn}</span></div>
+      </div>
+      <div class="card-body">
+        <span class="card-badge">${lang==='ko'?s.bKo:s.bEn}</span>
+        <h3 class="card-name">${lang==='ko'?s.nKo:s.nEn}</h3>
+        <p class="card-desc">${(lang==='ko'?s.dKo:s.dEn).slice(0,68)}…</p>
+        <span class="card-more">${lang==='ko'?'자세히 보기 →':'View details →'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filter = btn.dataset.filter;
+    renderSpaces();
+  });
+});
+
+/* LIGHTBOX */
+function openLb(id) {
+  const s = SPACES.find(x => x.id === id); if (!s) return;
+  const n = lang==='ko'?s.nKo:s.nEn;
+  document.getElementById('lbThumb').innerHTML = `
+    <div class="thumb ${s.tc}" style="width:100%;height:100%">
+      <div class="thumb-icon"><div class="icon" style="font-size:3.5rem">${s.emoji}</div></div>
+      <img src="${s.img}" alt="${n}" onload="this.classList.add('on')" onerror="this.remove()">
+    </div>`;
+  document.getElementById('lbBadge').textContent = lang==='ko'?s.bKo:s.bEn;
+  document.getElementById('lbTitle').textContent = n;
+  document.getElementById('lbDesc').textContent  = lang==='ko'?s.dKo:s.dEn;
+  document.getElementById('lbOv').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLb(e) {
+  if (e && !e.target.classList.contains('lb-ov') && !e.target.classList.contains('lb-close')) return;
+  document.getElementById('lbOv').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* FORMS */
+const SUBMIT_URL = 'https://huestay-api.YOUR-CF-USER.workers.dev/submit';
+
+function saveToServer(data) {
+  fetch(SUBMIT_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+
+function submitRes(e) {
+  e.preventDefault();
+  const f = e.target;
+  const data = {
+    type:'reservation',
+    name:f.name.value, contact:f.contact.value,
+    email:f.email.value, company:f.company.value,
+    checkin:f.checkin.value, checkout:f.checkout.value,
+    guests:f.guests.value, message:f.message.value
+  };
+  saveToServer(data);
+  const msg = encodeURIComponent(
+    `[Hue Stay 예약]\n이름: ${data.name}\n연락처: ${data.contact}\n이메일: ${data.email||'-'}\n회사명: ${data.company||'-'}\n체크인: ${data.checkin}\n체크아웃: ${data.checkout}\n인원: ${data.guests}\n문의: ${data.message}`
+  );
+  window.open(`https://wa.me/966569814239?text=${msg}`, '_blank');
+  f.reset();
+  showToast(lang==='ko'?'예약 신청이 접수되었습니다 ✅':'Reservation submitted ✅');
+}
+
+/* INQUIRY BOARD */
+function getQ() { try { return JSON.parse(localStorage.getItem('hs_q')||'[]'); } catch { return []; } }
+function setQ(l) { localStorage.setItem('hs_q', JSON.stringify(l)); }
+function renderBoard() {
+  const list = getQ(); const el = document.getElementById('boardList');
+  if (!list.length) { el.innerHTML = `<div class="board-empty"><span class="icon">📋</span>${lang==='ko'?'아직 문의가 없습니다.':'No inquiries yet.'}</div>`; return; }
+  el.innerHTML = list.slice().reverse().map((item, ri) => {
+    const idx = list.length - 1 - ri;
+    return `<div class="board-item" onclick="openMo(${idx})">
+      <div class="bi-top"><span class="bi-title">${esc(item.subject)}</span><span style="display:flex;align-items:center;gap:.3rem"><span class="bi-date">${item.date}</span><span class="bi-tag">${lang==='ko'?'대기중':'Pending'}</span></span></div>
+      <div class="bi-preview">${esc(item.name)} · ${esc(item.message)}</div>
+    </div>`;
+  }).join('');
+}
+function submitInquiry(e) {
+  e.preventDefault(); const f = e.target;
+  const data = {
+    type:'inquiry',
+    name:f.name.value, company:f.company.value,
+    email:f.email.value, subject:f.subject.value, message:f.message.value
+  };
+  saveToServer(data);
+  const list = getQ();
+  list.push({ name:data.name, company:data.company, email:data.email, subject:data.subject, message:data.message, date:new Date().toLocaleDateString('ko-KR') });
+  setQ(list); f.reset(); renderBoard();
+  showToast(lang==='ko'?'문의가 등록되었습니다!':'Inquiry submitted!');
+}
+function openMo(idx) {
+  const item = getQ()[idx]; if (!item) return;
+  document.getElementById('moTitle').textContent = item.subject;
+  const meta = [item.name, item.company, item.email, item.date].filter(Boolean).join(' · ');
+  document.getElementById('moMeta').textContent  = meta;
+  document.getElementById('moBody').textContent  = item.message;
+  document.getElementById('moOv').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMo(e) {
+  if (e && !e.target.classList.contains('mo-ov') && !e.target.classList.contains('mo-close')) return;
+  document.getElementById('moOv').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* TOAST */
+let tt;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 3500);
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* INIT */
+renderSpaces();
+renderBoard();
+</script>
+</body>
+</html>
