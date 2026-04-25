@@ -1,18 +1,38 @@
 /**
  * Hue Stay Submit Worker
- *  POST /submit  →  Google Sheets append
+ *  POST /submit  →  Google Sheets append (tab routed by type)
  *
- * Required secrets (wrangler secret put ...):
- *   GOOGLE_SA_JSON   - Service Account JSON (전체 파일을 그대로)
+ * Required secrets:
+ *   GOOGLE_SA_JSON   - Service Account JSON (전체 내용)
  *   SHEET_ID         - Google Sheet ID
- *   SHEET_TAB        - 탭 이름 (예: 시트1)
  *   ALLOWED_ORIGIN   - CORS 허용 origin (예: https://huestay.pages.dev)
+ *
+ * 라우팅:
+ *   body.type === 'inquiry'      → tab '문의'
+ *   body.type === 'reservation'  → tab '예약'
+ *   기타                          → tab '기타'
  */
 
-const HEADERS_ROW = [
-  '접수일시','유형','이름','연락처','이메일','회사명',
-  '체크인','체크아웃','인원','제목','내용'
-];
+const TABS = {
+  reservation: {
+    name: '예약',
+    headers: ['접수일시','이름','연락처','이메일','회사명','체크인','체크아웃','인원','메시지'],
+    pick: (b) => [b.name||'', b.contact||'', b.email||'', b.company||'',
+                  b.checkin||'', b.checkout||'', b.guests||'', b.message||''],
+  },
+  inquiry: {
+    name: '문의',
+    headers: ['접수일시','이름','연락처','이메일','회사명','제목','내용'],
+    pick: (b) => [b.name||'', b.contact||'', b.email||'', b.company||'',
+                  b.subject||'', b.message||''],
+  },
+  other: {
+    name: '기타',
+    headers: ['접수일시','유형','이름','연락처','이메일','회사명','체크인','체크아웃','인원','제목','내용'],
+    pick: (b) => [b.type||'', b.name||'', b.contact||'', b.email||'', b.company||'',
+                  b.checkin||'', b.checkout||'', b.guests||'', b.subject||'', b.message||''],
+  },
+};
 
 export default {
   async fetch(request, env) {
@@ -31,24 +51,13 @@ export default {
       return json({ ok: false, error: 'invalid body' }, 400, cors);
     }
 
+    const tab = TABS[body.type] || TABS.other;
     try {
       const token = await getAccessToken(env);
-      const row = [
-        nowIso(),
-        body.type || '',
-        body.name || '',
-        body.contact || '',
-        body.email || '',
-        body.company || '',
-        body.checkin || '',
-        body.checkout || '',
-        body.guests || '',
-        body.subject || '',
-        body.message || '',
-      ];
-      await ensureHeader(env, token);
-      await appendRow(env, token, row);
-      return json({ ok: true }, 200, cors);
+      const row = [nowIso(), ...tab.pick(body)];
+      await ensureTabAndHeader(env, token, tab.name, tab.headers);
+      await appendRow(env, token, tab.name, row, tab.headers.length);
+      return json({ ok: true, tab: tab.name }, 200, cors);
     } catch (e) {
       return json({ ok: false, error: String(e?.message || e) }, 500, cors);
     }
@@ -81,9 +90,15 @@ function nowIso() {
   return kst.toISOString().replace('T', ' ').replace(/\..+/, '');
 }
 
-async function appendRow(env, token, row) {
-  const tab = encodeURIComponent(env.SHEET_TAB || '시트1');
-  const range = `${tab}!A:K`;
+const COL_LETTER = (n) => {
+  let s = '';
+  while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+};
+
+async function appendRow(env, token, tabName, row, colCount) {
+  const tab = encodeURIComponent(tabName);
+  const range = `${tab}!A:${COL_LETTER(colCount)}`;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${range}:append?valueInputOption=USER_ENTERED`;
   const r = await fetch(url, {
     method: 'POST',
@@ -93,21 +108,41 @@ async function appendRow(env, token, row) {
   if (!r.ok) throw new Error(`sheets append ${r.status}: ${await r.text()}`);
 }
 
-async function ensureHeader(env, token) {
-  // A1 한 셀만 읽어 헤더가 비었거나 다르면 1행에 헤더 삽입
-  const tab = encodeURIComponent(env.SHEET_TAB || '시트1');
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1`;
-  const r = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+async function ensureTabAndHeader(env, token, tabName, headers) {
+  // 1. spreadsheet metadata 조회 - 탭 존재 확인
+  const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}?fields=sheets.properties`;
+  const m = await fetch(metaUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+  if (!m.ok) throw new Error(`sheets meta ${m.status}: ${await m.text()}`);
+  const meta = await m.json();
+  const tabs = (meta.sheets || []).map(s => s.properties.title);
+
+  // 2. 탭이 없으면 생성
+  if (!tabs.includes(tabName)) {
+    const batchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}:batchUpdate`;
+    const b = await fetch(batchUrl, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requests: [{ addSheet: { properties: { title: tabName } } }]
+      }),
+    });
+    if (!b.ok) throw new Error(`sheets addSheet ${b.status}: ${await b.text()}`);
+  }
+
+  // 3. 헤더 확인 및 입력
+  const tab = encodeURIComponent(tabName);
+  const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1`;
+  const r = await fetch(readUrl, { headers: { 'Authorization': `Bearer ${token}` } });
   if (!r.ok) throw new Error(`sheets read ${r.status}: ${await r.text()}`);
   const data = await r.json();
   const a1 = (data.values && data.values[0] && data.values[0][0]) || '';
-  if (a1 === HEADERS_ROW[0]) return;
-  // insert header at row 1 by writing values to A1:K1
-  const wurl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1:K1?valueInputOption=USER_ENTERED`;
+  if (a1 === headers[0]) return;
+  const lastCol = COL_LETTER(headers.length);
+  const wurl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1:${lastCol}1?valueInputOption=USER_ENTERED`;
   const w = await fetch(wurl, {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [HEADERS_ROW] })
+    body: JSON.stringify({ values: [headers] })
   });
   if (!w.ok) throw new Error(`sheets header ${w.status}: ${await w.text()}`);
 }
