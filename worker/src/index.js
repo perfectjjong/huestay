@@ -1,13 +1,31 @@
 /**
  * Hue Stay Submit Worker
- *  POST /submit              → Google Sheets append (tab routed by type)
- *  GET  /inquiries           → 공개 문의 목록 (비공개 마스킹)
- *  GET  /admin/inquiries     → 전체 문의 목록 (ADMIN_SECRET 필요)
- *  POST /admin/reply         → 문의 답변 저장 (ADMIN_SECRET 필요)
- *
- * Secrets: GOOGLE_SA_JSON, SHEET_ID, ALLOWED_ORIGIN, ADMIN_SECRET,
- *          TELEGRAM_BOT_TOKEN (선택), TELEGRAM_CHAT_ID (선택)
+ *  POST /submit                     → Google Sheets append
+ *  GET  /inquiries                  → 공개 문의 목록
+ *  GET  /admin/inquiries            → 전체 문의 목록 (ADMIN_SECRET 필요)
+ *  POST /admin/reply                → 문의 답변 저장 (ADMIN_SECRET 필요)
+ *  GET  /spaces                     → 공간 설정 반환 (KV → 없으면 기본값)
+ *  POST /admin/spaces               → 공간 텍스트 메타 저장 (KV)
+ *  POST /admin/spaces/:id/image     → 공간 이미지 업로드 (R2)
+ *  GET  /images/spaces/:file        → R2 이미지 서빙
  */
+
+const DEFAULT_SPACES = [
+  { id:'yard',   cat:'outdoor', tc:'t-yard',    emoji:'🌿', bKo:'야외 공간', bEn:'Outdoor',   nKo:'마당',        nEn:'Garden Yard',      dKo:'탁 트인 하늘 아래 펼쳐지는 야외 마당. 아침 커피 한 잔과 함께 여유를 즐기거나 저녁 노을을 감상하기 좋습니다.',         dEn:'A beautiful outdoor yard under the open sky. Perfect for morning coffee or watching the evening sunset.',   img:'images/spaces/yard.jpg' },
+  { id:'dining', cat:'dining',  tc:'t-dining',  emoji:'🍽️', bKo:'식당',     bEn:'Dining',    nKo:'다이닝룸',    nEn:'Dining Room',      dKo:'정성스러운 한국 가정식이 제공되는 식사 공간. 매일 조식이 준비되며 한국의 맛을 사우디에서 느껴보세요.',          dEn:'Korean home-style meals served daily. Enjoy the taste of home in the heart of Saudi Arabia.',              img:'images/spaces/dining.jpg' },
+  { id:'bed1',   cat:'bedroom', tc:'t-bed1',    emoji:'🛏️', bKo:'침실 1',   bEn:'Room 101',  nKo:'침실 101',    nEn:'Bedroom 101',      dKo:'따뜻한 톤의 더블베드룸. 에어컨과 개인 욕실 완비. 프라이빗한 휴식 공간.',                                         dEn:'Warm-toned double bedroom with A/C and private bathroom.',                                                 img:'images/spaces/bed1.jpg' },
+  { id:'bed2',   cat:'bedroom', tc:'t-bed2',    emoji:'🛏️', bKo:'침실 2',   bEn:'Room 102',  nKo:'침실 102',    nEn:'Bedroom 102',      dKo:'트윈베드 구성. 두 분이 편안하게 사용할 수 있는 넉넉한 공간.',                                                       dEn:'Twin bed setup, spacious enough for two guests.',                                                          img:'images/spaces/bed2.jpg' },
+  { id:'bed3',   cat:'bedroom', tc:'t-bed3',    emoji:'🛏️', bKo:'침실 3',   bEn:'Room 103',  nKo:'침실 103',    nEn:'Bedroom 103',      dKo:'혼자 조용히 쉬기에 최적인 싱글룸. 아늑하고 아담한 나만의 공간.',                                                    dEn:'A cozy single room perfect for solo travelers.',                                                           img:'images/spaces/bed3.jpg' },
+  { id:'bed4',   cat:'bedroom', tc:'t-bed4',    emoji:'🛏️', bKo:'침실 4',   bEn:'Room 104',  nKo:'침실 104',    nEn:'Bedroom 104',      dKo:'마당이 보이는 더블룸. 자연광이 풍부하고 아침 풍경이 아름답습니다.',                                                  dEn:'Double room overlooking the yard. Abundant natural light.',                                                img:'images/spaces/bed4.jpg' },
+  { id:'bed5',   cat:'bedroom', tc:'t-bed5',    emoji:'🛏️', bKo:'침실 5',   bEn:'Room 105',  nKo:'침실 105',    nEn:'Bedroom 105',      dKo:'가족 단위에 적합한 트리플룸. 여러 명이 함께 편안하게 지낼 수 있습니다.',                                            dEn:'Triple room ideal for families or small groups.',                                                          img:'images/spaces/bed5.jpg' },
+  { id:'bed6',   cat:'bedroom', tc:'t-bed6',    emoji:'🛏️', bKo:'침실 6',   bEn:'Room 106',  nKo:'침실 106',    nEn:'Bedroom 106',      dKo:'프리미엄 더블룸. 독립된 구조로 최상의 프라이버시. 가장 인기 있는 객실.',                                            dEn:'Premium double room with maximum privacy. Most popular.',                                                  img:'images/spaces/bed6.jpg' },
+  { id:'liv1',   cat:'living',  tc:'t-living1', emoji:'🛋️', bKo:'거실 1',   bEn:'Living 1',  nKo:'메인 거실',   nEn:'Main Living Room',  dKo:'넓고 시원한 공용 거실. 소파, TV, 도서, 보드게임을 갖추고 있어 편안하게 쉬어갈 수 있습니다.',                       dEn:'Spacious common living room with sofa, TV, books, and board games.',                                       img:'images/spaces/living1.jpg' },
+  { id:'liv2',   cat:'living',  tc:'t-living2', emoji:'📺', bKo:'거실 2',   bEn:'Living 2',  nKo:'TV 거실',     nEn:'TV Lounge',         dKo:'대형 TV와 기타가 있는 아늑한 두 번째 거실. 작은 모임이나 여가 시간을 즐기기 좋습니다.',                            dEn:'Cozy lounge with a large TV and guitar, perfect for relaxing evenings.',                                   img:'images/spaces/tv_room.jpg' },
+  { id:'meal1',  cat:'meal',    tc:'t-meal1',   emoji:'🍚', bKo:'식사',     bEn:'Meals',     nKo:'조식',        nEn:'Breakfast',         dKo:'매일 아침 정성껏 준비한 한국식 조식. 따뜻한 밥과 국, 반찬으로 하루를 시작하세요.',                                     dEn:'Korean-style breakfast served every morning. Start your day with warm rice, soup, and side dishes.',        img:'' },
+  { id:'meal2',  cat:'meal',    tc:'t-meal2',   emoji:'🥘', bKo:'식사',     bEn:'Meals',     nKo:'한식 정식',   nEn:'Korean Set Meal',   dKo:'깊은 맛의 한식 정식. 찌개·구이·나물 등 집밥 그대로의 풍성한 한 끼를 즐기실 수 있습니다.',                             dEn:'Full Korean set meal with stew, grilled dishes, and seasoned vegetables — just like home.',                img:'' },
+  { id:'meal3',  cat:'meal',    tc:'t-meal3',   emoji:'☕', bKo:'음료',     bEn:'Drinks',    nKo:'커피 & 음료', nEn:'Coffee & Drinks',   dKo:'에스프레소 머신과 다양한 티, 음료를 24시간 자유롭게 이용하실 수 있습니다.',                                             dEn:'Espresso machine, teas, and beverages available 24 hours.',                                                img:'' },
+  { id:'meal4',  cat:'meal',    tc:'t-meal4',   emoji:'🥗', bKo:'건강식',   bEn:'Healthy',   nKo:'샐러드 & 간식', nEn:'Salad & Snacks', dKo:'신선한 샐러드와 과일, 한국 간식류를 상시 비치. 가벼운 식사도 걱정 없습니다.',                                         dEn:'Fresh salad, fruit, and Korean snacks available anytime.',                                                 img:'' },
+];
 
 const TABS = {
   reservation: {
@@ -30,12 +48,67 @@ const TABS = {
   },
 };
 
+const IMG_TYPES = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', gif:'image/gif', avif:'image/avif' };
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const cors = corsHeaders(request, env);
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors });
+
+    /* ── GET /spaces : 공간 설정 ── */
+    if (url.pathname === '/spaces' && request.method === 'GET') {
+      try {
+        const stored = env.SPACES_KV ? await env.SPACES_KV.get('spaces_config', 'json') : null;
+        return json({ ok: true, spaces: stored || DEFAULT_SPACES }, 200, cors);
+      } catch {
+        return json({ ok: true, spaces: DEFAULT_SPACES }, 200, cors);
+      }
+    }
+
+    /* ── POST /admin/spaces : 공간 텍스트 메타 저장 ── */
+    if (url.pathname === '/admin/spaces' && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
+      let body;
+      try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      if (!Array.isArray(body.spaces)) return json({ ok: false, error: 'spaces array required' }, 400, cors);
+      await env.SPACES_KV.put('spaces_config', JSON.stringify(body.spaces));
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── POST /admin/spaces/:id/image : 이미지 업로드 (KV 저장) ── */
+    const imgUploadMatch = url.pathname.match(/^\/admin\/spaces\/([^/]+)\/image$/);
+    if (imgUploadMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
+      const spaceId = imgUploadMatch[1];
+      let formData;
+      try { formData = await request.formData(); } catch { return json({ ok: false, error: 'invalid form data' }, 400, cors); }
+      const file = formData.get('file');
+      if (!file || !file.size) return json({ ok: false, error: 'no file' }, 400, cors);
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const ct  = IMG_TYPES[ext] || 'image/jpeg';
+      const kvKey = `img:${spaceId}`;
+      const buf = await file.arrayBuffer();
+      // KV 메타에 content-type 저장, 값은 바이너리
+      await env.SPACES_KV.put(kvKey, buf, { metadata: { contentType: ct } });
+      return json({ ok: true, url: `/images/spaces/${spaceId}` }, 200, cors);
+    }
+
+    /* ── GET /images/spaces/:id : KV 이미지 서빙 ── */
+    const imgServeMatch = url.pathname.match(/^\/images\/spaces\/([^/]+)$/);
+    if (imgServeMatch && request.method === 'GET') {
+      if (!env.SPACES_KV) return new Response('Not configured', { status: 503 });
+      const spaceId = imgServeMatch[1];
+      const { value, metadata } = await env.SPACES_KV.getWithMetadata(`img:${spaceId}`, 'arrayBuffer');
+      if (!value) return new Response('Not Found', { status: 404 });
+      const ct = (metadata && metadata.contentType) || 'image/jpeg';
+      return new Response(value, {
+        headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=86400', ...cors },
+      });
+    }
 
     /* ── GET /inquiries : 공개 게시판용 ── */
     if (url.pathname === '/inquiries' && request.method === 'GET') {
@@ -59,10 +132,7 @@ export default {
 
     /* ── GET /admin/inquiries : 어드민 전용 ── */
     if (url.pathname === '/admin/inquiries' && request.method === 'GET') {
-      const secret = url.searchParams.get('secret');
-      if (!env.ADMIN_SECRET || secret !== env.ADMIN_SECRET) {
-        return json({ ok: false, error: 'unauthorized' }, 401, cors);
-      }
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
       try {
         const token = await getAccessToken(env);
         const rows = await getRows(env, token, '문의');
@@ -80,18 +150,12 @@ export default {
 
     /* ── POST /admin/reply : 답변 저장 ── */
     if (url.pathname === '/admin/reply' && request.method === 'POST') {
-      const secret = url.searchParams.get('secret');
-      if (!env.ADMIN_SECRET || secret !== env.ADMIN_SECRET) {
-        return json({ ok: false, error: 'unauthorized' }, 401, cors);
-      }
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
       let body;
       try { body = await request.json(); }
       catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
-
       try {
         const token = await getAccessToken(env);
-        // id는 1-based 데이터 행 번호. 시트 행 번호 = id + 1 (1행이 헤더)
-        // 답변은 I열 (9번째 컬럼)
         const sheetRow = body.id + 1;
         const tab = encodeURIComponent('문의');
         const wurl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!I${sheetRow}?valueInputOption=USER_ENTERED`;
@@ -135,6 +199,11 @@ export default {
     }
   }
 };
+
+function isAdmin(url, env) {
+  const secret = url.searchParams.get('secret');
+  return env.ADMIN_SECRET && secret === env.ADMIN_SECRET;
+}
 
 function corsHeaders(req, env) {
   const origin = req.headers.get('Origin') || '';
@@ -206,7 +275,6 @@ async function ensureTabAndHeader(env, token, tabName, headers) {
     if (!b.ok) throw new Error(`sheets addSheet ${b.status}: ${await b.text()}`);
   }
 
-  // 전체 헤더 행 비교하여 필요시 업데이트
   const tab = encodeURIComponent(tabName);
   const lastCol = COL_LETTER(headers.length);
   const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1:${lastCol}1`;

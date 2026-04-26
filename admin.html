@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hue Stay Admin — 문의 관리</title>
+  <title>Hue Stay Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,8 +30,16 @@
     .btn-login:hover { background: var(--terra-dark); }
     .err { color: #DC2626; font-size: .8rem; margin-top: .5rem; }
 
-    /* ADMIN */
-    .container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; }
+    /* TABS */
+    .tab-nav { background: var(--sand); border-bottom: 2px solid var(--gold); display: flex; gap: 0; }
+    .tab-btn { padding: .75rem 1.5rem; border: none; background: transparent; font-family: inherit; font-size: .88rem; font-weight: 500; color: var(--brown-light); cursor: pointer; transition: background .15s, color .15s; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .tab-btn.active { color: var(--terra); border-bottom-color: var(--terra); background: var(--cream); font-weight: 700; }
+    .tab-btn:hover:not(.active) { background: rgba(0,0,0,.04); }
+
+    /* CONTAINER */
+    .container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; }
+
+    /* STATS */
     .stats { display: flex; gap: .8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .stat { background: #fff; border-radius: 10px; padding: .7rem 1.1rem; box-shadow: 0 2px 10px var(--shadow); }
     .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--terra); }
@@ -39,7 +47,7 @@
     .refresh-btn { margin-left: auto; padding: .45rem 1rem; border: 1.5px solid var(--gold); background: transparent; border-radius: 8px; font-size: .78rem; cursor: pointer; font-family: inherit; color: var(--brown); }
     .refresh-btn:hover { background: var(--sand); }
 
-    /* CARDS */
+    /* INQUIRY CARDS */
     .card {
       background: #fff; border-radius: 14px; margin-bottom: 1rem;
       box-shadow: 0 2px 14px var(--shadow); overflow: hidden;
@@ -55,25 +63,17 @@
     .badge-priv { background: #F3F4F6; color: #374151; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
     .badge-pub  { background: #D1FAE5; color: #065F46; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
     .badge-replied { background: #DBEAFE; color: #1E40AF; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
-    .card-date { font-size: .73rem; color: var(--brown-light); }
     .chevron { font-size: .8rem; color: var(--brown-light); transition: transform .2s; }
     .card.open .chevron { transform: rotate(180deg); }
-
     .card-body { display: none; padding: 0 1.2rem 1.2rem; border-top: 1px solid var(--sand); }
     .card.open .card-body { display: block; }
-
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .8rem; margin: .8rem 0 1rem; }
     .info-row { font-size: .8rem; }
     .info-label { font-weight: 600; color: var(--brown-light); font-size: .72rem; }
     .msg-box { background: var(--cream); border-radius: 8px; padding: .75rem 1rem; font-size: .85rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word; margin-bottom: 1rem; }
-
-    /* REPLY */
     .reply-section { border-top: 1px dashed var(--gold); padding-top: .9rem; }
     .reply-section label { font-size: .78rem; font-weight: 600; color: var(--brown-light); display: block; margin-bottom: .4rem; }
-    .reply-section textarea {
-      width: 100%; padding: .7rem .9rem; border: 1.5px solid var(--gold); border-radius: 8px;
-      font-family: inherit; font-size: .85rem; resize: vertical; min-height: 80px; outline: none;
-    }
+    .reply-section textarea { width: 100%; padding: .7rem .9rem; border: 1.5px solid var(--gold); border-radius: 8px; font-family: inherit; font-size: .85rem; resize: vertical; min-height: 80px; outline: none; }
     .reply-section textarea:focus { border-color: var(--terra); }
     .reply-actions { display: flex; align-items: center; gap: .6rem; margin-top: .6rem; flex-wrap: wrap; }
     .btn-save { padding: .5rem 1.2rem; background: var(--terra); color: #fff; border: none; border-radius: 8px; font-size: .83rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
@@ -86,18 +86,74 @@
     .reply-wa { background: #25D366; color: #fff; }
     .save-msg { font-size: .75rem; color: #16A34A; }
 
+    /* SPACES ADMIN */
+    .spaces-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: .6rem; }
+    .spaces-header h2 { font-size: 1rem; font-weight: 600; }
+    .spaces-notice { font-size: .8rem; color: var(--brown-light); background: var(--sand); border-radius: 8px; padding: .6rem .9rem; }
+
+    .space-edit-card {
+      background: #fff; border-radius: 14px; margin-bottom: 1.2rem;
+      box-shadow: 0 2px 14px var(--shadow); overflow: hidden;
+    }
+    .sec-head {
+      padding: .85rem 1.2rem; display: flex; align-items: center; gap: .7rem;
+      cursor: pointer; user-select: none; border-bottom: 1px solid var(--sand);
+    }
+    .sec-head:hover { background: var(--cream); }
+    .sec-emoji { font-size: 1.3rem; }
+    .sec-title { font-weight: 600; font-size: .95rem; flex: 1; }
+    .sec-sub { font-size: .75rem; color: var(--brown-light); }
+    .sec-body { display: none; padding: 1.2rem; }
+    .space-edit-card.open .sec-body { display: block; }
+    .space-edit-card.open .chevron { transform: rotate(180deg); }
+
+    .img-row { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .img-preview-wrap { flex-shrink: 0; }
+    .img-preview {
+      width: 140px; height: 100px; border-radius: 10px; object-fit: cover;
+      background: var(--sand); border: 2px dashed var(--gold); display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; overflow: hidden;
+    }
+    .img-preview img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 8px; }
+    .img-preview img.loaded { display: block; }
+    .img-upload-btn {
+      display: inline-block; margin-top: .5rem; padding: .35rem .8rem;
+      border: 1.5px solid var(--gold); border-radius: 7px; font-size: .78rem;
+      cursor: pointer; font-family: inherit; background: transparent; color: var(--brown);
+      transition: background .15s;
+    }
+    .img-upload-btn:hover { background: var(--sand); }
+    .img-upload-input { display: none; }
+    .img-changed-badge { display: none; font-size: .7rem; color: var(--terra); margin-top: .3rem; font-weight: 600; }
+
+    .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
+    .field-group label { display: block; font-size: .73rem; font-weight: 600; color: var(--brown-light); margin-bottom: .3rem; }
+    .field-group input, .field-group textarea {
+      width: 100%; padding: .55rem .75rem; border: 1.5px solid var(--gold); border-radius: 8px;
+      font-family: inherit; font-size: .85rem; outline: none; color: var(--brown);
+    }
+    .field-group input:focus, .field-group textarea:focus { border-color: var(--terra); }
+    .field-group textarea { resize: vertical; min-height: 70px; }
+    .field-full { grid-column: 1 / -1; }
+
+    .space-save-row { display: flex; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--gold); }
+    .space-save-msg { font-size: .75rem; color: #16A34A; display: none; }
+    .space-save-err { font-size: .75rem; color: #DC2626; display: none; }
+
     .empty { text-align: center; padding: 3rem; color: var(--brown-light); }
     .hidden { display: none !important; }
 
     @media (max-width: 520px) {
       .info-grid { grid-template-columns: 1fr; }
       .reply-opt-label { display: none; }
+      .fields-grid { grid-template-columns: 1fr; }
+      .img-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 <header>
-  <h1>🏡 Hue Stay · 문의 관리</h1>
+  <h1>🏡 Hue Stay · 관리자</h1>
   <a href="/">← 홈으로</a>
 </header>
 
@@ -113,7 +169,14 @@
 
 <!-- ADMIN -->
 <div id="adminSection" class="hidden">
-  <div class="container">
+  <!-- TAB NAV -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('inquiries')">📋 문의 관리</button>
+    <button class="tab-btn" onclick="switchTab('spaces')">🏠 공간 관리</button>
+  </div>
+
+  <!-- 문의 관리 탭 -->
+  <div id="tabInquiries" class="container">
     <div class="stats">
       <div class="stat"><div class="stat-num" id="statTotal">-</div><div class="stat-label">전체</div></div>
       <div class="stat"><div class="stat-num" id="statPub">-</div><div class="stat-label">공개</div></div>
@@ -123,13 +186,28 @@
     </div>
     <div id="cardList"></div>
   </div>
+
+  <!-- 공간 관리 탭 -->
+  <div id="tabSpaces" class="container hidden">
+    <div class="spaces-header">
+      <h2>공간 관리</h2>
+    </div>
+    <div class="spaces-notice">
+      각 공간의 사진과 이름·설명을 수정할 수 있습니다. 저장 후 홈페이지에 즉시 반영됩니다.
+    </div>
+    <div style="height:.9rem"></div>
+    <div id="spacesList"></div>
+  </div>
 </div>
 
 <script>
 const API_BASE = 'https://huestay-api.perfectjjong.workers.dev';
 let adminSecret = '';
 let posts = [];
+let spacesData = [];
+let pendingImages = {}; // { spaceId: File }
 
+/* ── 로그인 ── */
 function doLogin() {
   const v = document.getElementById('secretInput').value.trim();
   if (!v) return;
@@ -137,6 +215,17 @@ function doLogin() {
   fetchInquiries();
 }
 
+/* ── 탭 전환 ── */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i===0&&tab==='inquiries')||(i===1&&tab==='spaces')));
+  document.getElementById('tabInquiries').classList.toggle('hidden', tab !== 'inquiries');
+  document.getElementById('tabSpaces').classList.toggle('hidden', tab !== 'spaces');
+  if (tab === 'spaces' && spacesData.length === 0) fetchSpaces();
+}
+
+/* ════════════════════════════
+   문의 관리
+════════════════════════════ */
 async function fetchInquiries() {
   const errEl = document.getElementById('loginErr');
   errEl.classList.add('hidden');
@@ -179,9 +268,7 @@ function renderCards() {
       ? `<span class="badge-priv">🔒 비공개</span>`
       : `<span class="badge-pub">🌐 공개</span>`;
     const repliedBadge = p.reply ? `<span class="badge-replied">✅ 답변완료</span>` : '';
-    const waHref = p.contact
-      ? `https://wa.me/${p.contact.replace(/[^0-9]/g,'')}`
-      : 'https://wa.me/';
+    const waHref = p.contact ? `https://wa.me/${p.contact.replace(/[^0-9]/g,'')}` : 'https://wa.me/';
     const infoRows = [
       ['이름', p.name], ['연락처', p.contact||'-'],
       ['이메일', p.email||'-'], ['회사명', p.company||'-'],
@@ -237,18 +324,15 @@ async function saveReply(id) {
     });
     const d = await r.json();
     if (d.ok) {
-      // Update local state
       const post = posts.find(p => p.id === id);
       if (post) post.reply = reply;
       msg.classList.remove('hidden');
       setTimeout(() => msg.classList.add('hidden'), 3000);
-      // Update badge
       const card = document.getElementById(`card-${id}`);
       const repliedBadge = card.querySelector('.badge-replied');
       if (reply && !repliedBadge) {
         card.querySelector('.card-right').insertAdjacentHTML('afterbegin', `<span class="badge-replied">✅ 답변완료</span>`);
       }
-      // Update stat
       document.getElementById('statReplied').textContent = posts.filter(p => p.reply).length;
     }
   } catch {
@@ -258,7 +342,172 @@ async function saveReply(id) {
   }
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* ════════════════════════════
+   공간 관리
+════════════════════════════ */
+async function fetchSpaces() {
+  try {
+    const r = await fetch(`${API_BASE}/spaces`);
+    const d = await r.json();
+    if (d.ok && Array.isArray(d.spaces)) {
+      spacesData = d.spaces;
+      renderSpaces();
+    }
+  } catch {
+    document.getElementById('spacesList').innerHTML = '<div class="empty">공간 데이터를 불러올 수 없습니다.</div>';
+  }
+}
+
+function renderSpaces() {
+  const el = document.getElementById('spacesList');
+  el.innerHTML = spacesData.map((s, idx) => {
+    const hasImg = s.img && s.img.trim();
+    return `
+    <div class="space-edit-card" id="sec-${s.id}">
+      <div class="sec-head" onclick="toggleSec('${s.id}')">
+        <span class="sec-emoji">${s.emoji}</span>
+        <div style="flex:1">
+          <div class="sec-title">${esc(s.nKo)} <span style="font-weight:400;color:var(--brown-light)">/ ${esc(s.nEn)}</span></div>
+          <div class="sec-sub">${esc(s.bKo)} · ${s.id}</div>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="sec-body">
+        <!-- 이미지 -->
+        <div class="img-row">
+          <div class="img-preview-wrap">
+            <div class="img-preview" id="preview-${s.id}">
+              ${hasImg
+                ? `<img src="${esc(s.img)}" alt="" onload="this.classList.add('loaded')" onerror="this.remove()">`
+                : `<span>${s.emoji}</span>`}
+            </div>
+            <div>
+              <label class="img-upload-btn" for="file-${s.id}">📷 사진 변경</label>
+              <input type="file" class="img-upload-input" id="file-${s.id}" accept="image/*" onchange="onFileChange('${s.id}', this)">
+              <div class="img-changed-badge" id="badge-${s.id}">사진 변경됨 (저장 전)</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.78rem;color:var(--brown-light);line-height:1.6">
+              권장 크기: 800×600px 이상<br>
+              지원 형식: JPG, PNG, WebP<br>
+              현재: <span id="imgurl-${s.id}" style="word-break:break-all">${hasImg ? esc(s.img) : '(없음)'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 텍스트 필드 -->
+        <div class="fields-grid">
+          <div class="field-group">
+            <label>이름 (한국어)</label>
+            <input type="text" id="nKo-${s.id}" value="${esc(s.nKo)}">
+          </div>
+          <div class="field-group">
+            <label>이름 (영어)</label>
+            <input type="text" id="nEn-${s.id}" value="${esc(s.nEn)}">
+          </div>
+          <div class="field-group">
+            <label>카테고리 레이블 (한국어)</label>
+            <input type="text" id="bKo-${s.id}" value="${esc(s.bKo)}">
+          </div>
+          <div class="field-group">
+            <label>카테고리 레이블 (영어)</label>
+            <input type="text" id="bEn-${s.id}" value="${esc(s.bEn)}">
+          </div>
+          <div class="field-group field-full">
+            <label>설명 (한국어)</label>
+            <textarea id="dKo-${s.id}">${esc(s.dKo)}</textarea>
+          </div>
+          <div class="field-group field-full">
+            <label>설명 (영어)</label>
+            <textarea id="dEn-${s.id}">${esc(s.dEn)}</textarea>
+          </div>
+        </div>
+
+        <div class="space-save-row">
+          <button class="btn-save" onclick="saveSpace('${s.id}')" id="sbtn-${s.id}">저장</button>
+          <span class="space-save-msg" id="smsg-${s.id}">저장되었습니다 ✓</span>
+          <span class="space-save-err" id="serr-${s.id}"></span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSec(id) {
+  document.getElementById(`sec-${id}`).classList.toggle('open');
+}
+
+function onFileChange(id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  pendingImages[id] = file;
+  document.getElementById(`badge-${id}`).style.display = 'block';
+  const preview = document.getElementById(`preview-${id}`);
+  const reader = new FileReader();
+  reader.onload = e => {
+    preview.innerHTML = `<img src="${e.target.result}" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:8px">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveSpace(id) {
+  const btn  = document.getElementById(`sbtn-${id}`);
+  const msg  = document.getElementById(`smsg-${id}`);
+  const err  = document.getElementById(`serr-${id}`);
+  btn.disabled = true;
+  msg.style.display = 'none';
+  err.style.display = 'none';
+
+  try {
+    // 이미지 먼저 업로드
+    if (pendingImages[id]) {
+      const fd = new FormData();
+      fd.append('file', pendingImages[id]);
+      const r = await fetch(`${API_BASE}/admin/spaces/${id}/image?secret=${encodeURIComponent(adminSecret)}`, {
+        method: 'POST', body: fd,
+      });
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error || '이미지 업로드 실패');
+      // spacesData에 새 URL 반영
+      const s = spacesData.find(x => x.id === id);
+      if (s) s.img = d.url;
+      document.getElementById(`imgurl-${id}`).textContent = d.url;
+      document.getElementById(`badge-${id}`).style.display = 'none';
+      delete pendingImages[id];
+    }
+
+    // 텍스트 메타 반영
+    const s = spacesData.find(x => x.id === id);
+    if (s) {
+      s.nKo = document.getElementById(`nKo-${id}`).value.trim();
+      s.nEn = document.getElementById(`nEn-${id}`).value.trim();
+      s.bKo = document.getElementById(`bKo-${id}`).value.trim();
+      s.bEn = document.getElementById(`bEn-${id}`).value.trim();
+      s.dKo = document.getElementById(`dKo-${id}`).value.trim();
+      s.dEn = document.getElementById(`dEn-${id}`).value.trim();
+    }
+
+    // 전체 spaces 저장
+    const r2 = await fetch(`${API_BASE}/admin/spaces?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ spaces: spacesData }),
+    });
+    const d2 = await r2.json();
+    if (!d2.ok) throw new Error(d2.error || '저장 실패');
+
+    msg.style.display = 'inline';
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  } catch (e) {
+    err.textContent = e.message || '오류가 발생했습니다.';
+    err.style.display = 'inline';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>
