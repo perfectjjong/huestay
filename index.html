@@ -357,6 +357,8 @@
     .board-empty .icon { font-size: 2.2rem; display: block; margin-bottom: .5rem; }
     .board-item-private { opacity: .6; cursor: default; }
     .bi-lock { font-size: .72rem; background: #F3F4F6; color: #6B7280; padding: .1rem .45rem; border-radius: 6px; }
+    .bi-reply { margin-top: .5rem; padding: .55rem .8rem; background: #F0FDF4; border-left: 3px solid #22C55E; border-radius: 0 6px 6px 0; font-size: .8rem; color: #15803D; }
+    .bi-reply-label { font-weight: 700; font-size: .72rem; margin-bottom: .2rem; }
     .priv-toggle { margin: .6rem 0 .4rem; }
     .priv-label { display:flex; align-items:center; gap:.5rem; font-size:.83rem; color:var(--brown-light); cursor:pointer; }
     .priv-label input[type=checkbox] { width:15px; height:15px; accent-color:var(--terra); cursor:pointer; }
@@ -596,30 +598,55 @@
 
 <!-- RESERVATION -->
 <section id="reservation">
-  <div class="container" style="text-align:center">
+  <div class="container">
     <p class="eyebrow">RESERVATION</p>
-    <h2 class="section-title" data-ko="예약하기" data-en="Book Your Stay">예약하기</h2>
+    <h2 class="section-title" data-ko="예약 및 문의" data-en="Book Your Stay">예약 및 문의</h2>
     <div class="divider"></div>
-    <p class="res-subtitle" data-ko="원하시는 채널로 바로 연결됩니다. 체크인·체크아웃 날짜와 인원을 알려주세요." data-en="Connect instantly via your preferred channel. Just share your check-in, check-out dates and number of guests.">원하시는 채널로 바로 연결됩니다. 체크인·체크아웃 날짜와 인원을 알려주세요.</p>
-    <div class="res-btns">
-      <a href="https://open.kakao.com/o/search#perfectjjong" target="_blank" class="res-btn res-kakao">
-        <div class="res-btn-icon">💬</div>
-        <div class="res-btn-text">
-          <div class="res-btn-name" data-ko="카카오톡으로 예약" data-en="Book via KakaoTalk">카카오톡으로 예약</div>
-          <div class="res-btn-sub">perfectjjong</div>
+    <div class="res-grid">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem" data-ko="실시간으로 연락하세요" data-en="Get in Touch">실시간으로 연락하세요</h3>
+        <p style="font-size:.86rem;color:var(--brown-light);line-height:1.8" data-ko="카카오톡·왓츠앱으로 빠르게 예약하거나 아래 양식을 작성해주세요. 24시간 내 답변드립니다." data-en="Book via KakaoTalk or WhatsApp, or fill in the form. We reply within 24 hours.">카카오톡·왓츠앱으로 빠르게 예약하거나 아래 양식을 작성해주세요. 24시간 내 답변드립니다.</p>
+        <div class="contact-list">
+          <a href="https://open.kakao.com/o/search#perfectjjong" target="_blank" class="contact-item">
+            <div class="ci-icon ci-kakao">💬</div>
+            <div><div class="ci-label" data-ko="카카오톡" data-en="KakaoTalk">카카오톡</div><div class="ci-val">perfectjjong</div></div>
+          </a>
+          <a href="https://wa.me/966569814239" target="_blank" class="contact-item">
+            <div class="ci-icon ci-wa">📱</div>
+            <div><div class="ci-label" data-ko="왓츠앱" data-en="WhatsApp">왓츠앱</div><div class="ci-val">+966-56-981-4239</div></div>
+          </a>
+          <a href="tel:+966569814239" class="contact-item">
+            <div class="ci-icon ci-tel">📞</div>
+            <div><div class="ci-label" data-ko="전화" data-en="Phone">전화</div><div class="ci-val">+966-56-981-4239</div></div>
+          </a>
         </div>
-        <div class="res-btn-arrow">→</div>
-      </a>
-      <a href="https://wa.me/966569814239" target="_blank" class="res-btn res-wa">
-        <div class="res-btn-icon">📱</div>
-        <div class="res-btn-text">
-          <div class="res-btn-name" data-ko="왓츠앱으로 예약" data-en="Book via WhatsApp">왓츠앱으로 예약</div>
-          <div class="res-btn-sub">+966-56-981-4239</div>
-        </div>
-        <div class="res-btn-arrow">→</div>
-      </a>
+      </div>
+      <div class="form-box">
+        <p class="form-title" data-ko="예약 신청서" data-en="Reservation Form">예약 신청서</p>
+        <form onsubmit="submitRes(event)">
+          <div class="frow">
+            <div class="fg"><label data-ko="이름" data-en="Name">이름</label><input type="text" name="name" required data-ko="홍길동" data-en="John Smith" placeholder="홍길동"></div>
+            <div class="fg"><label data-ko="연락처" data-en="Contact">연락처</label><input type="text" name="contact" required data-ko="+82-10-XXXX-XXXX" data-en="+966-XX-XXXX-XXXX" placeholder="+82-10-XXXX-XXXX"></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
+            <div class="fg"><label data-ko="회사명" data-en="Company">회사명</label><input type="text" name="company" data-ko="회사명 (선택)" data-en="Company (optional)" placeholder="회사명 (선택)"></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label data-ko="체크인" data-en="Check-in">체크인</label><input type="date" name="checkin" required></div>
+            <div class="fg"><label data-ko="체크아웃" data-en="Check-out">체크아웃</label><input type="date" name="checkout" required></div>
+          </div>
+          <div class="fg">
+            <label data-ko="인원" data-en="Guests">인원</label>
+            <select name="guests">
+              <option>1명</option><option>2명</option><option>3명</option><option>4명</option><option>5명 이상</option>
+            </select>
+          </div>
+          <div class="fg"><label data-ko="문의 사항" data-en="Message">문의 사항</label><textarea name="message" data-ko="요청사항을 적어주세요" data-en="Enter your requests here" placeholder="요청사항을 적어주세요"></textarea></div>
+          <button type="submit" class="btn-send" data-ko="예약 신청하기" data-en="Submit Request">예약 신청하기</button>
+        </form>
+      </div>
     </div>
-    <p class="res-note" data-ko="📞 전화: +966-56-981-4239 · 24시간 내 답변" data-en="📞 Phone: +966-56-981-4239 · Reply within 24 hours">📞 전화: +966-56-981-4239 · 24시간 내 답변</p>
   </div>
 </section>
 
@@ -836,6 +863,25 @@ function closeLb(e) {
 const API_BASE   = 'https://huestay-api.perfectjjong.workers.dev';
 const SUBMIT_URL = API_BASE + '/submit';
 
+function submitRes(e) {
+  e.preventDefault();
+  const f = e.target;
+  const data = {
+    type:'reservation',
+    name:f.name.value, contact:f.contact.value,
+    email:f.email.value, company:f.company.value,
+    checkin:f.checkin.value, checkout:f.checkout.value,
+    guests:f.guests.value, message:f.message.value
+  };
+  fetch(SUBMIT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }).catch(()=>{});
+  const msg = encodeURIComponent(
+    `[Hue Stay 예약]\n이름: ${data.name}\n연락처: ${data.contact}\n이메일: ${data.email||'-'}\n회사명: ${data.company||'-'}\n체크인: ${data.checkin}\n체크아웃: ${data.checkout}\n인원: ${data.guests}\n문의: ${data.message}`
+  );
+  window.open(`https://wa.me/966569814239?text=${msg}`, '_blank');
+  f.reset();
+  showToast(lang==='ko'?'예약 신청이 접수되었습니다 ✅':'Reservation submitted ✅');
+}
+
 /* INQUIRY BOARD */
 let inquiries = [];
 
@@ -862,9 +908,13 @@ function renderBoard() {
         <div class="bi-preview" style="color:var(--brown-light)">${lang==='ko'?'비공개로 등록된 문의입니다.':'This inquiry is private.'}</div>
       </div>`;
     }
+    const replyHtml = item.reply
+      ? `<div class="bi-reply"><div class="bi-reply-label">💬 ${lang==='ko'?'관리자 답변':'Admin reply'}</div>${esc(item.reply)}</div>`
+      : '';
     return `<div class="board-item" onclick="openMo(${idx})">
-      <div class="bi-top"><span class="bi-title">${esc(item.subject)}</span><span style="display:flex;align-items:center;gap:.3rem"><span class="bi-date">${item.date}</span><span class="bi-tag">${lang==='ko'?'접수':'Received'}</span></span></div>
+      <div class="bi-top"><span class="bi-title">${esc(item.subject)}</span><span style="display:flex;align-items:center;gap:.3rem"><span class="bi-date">${item.date}</span><span class="bi-tag">${item.reply?(lang==='ko'?'답변완료':'Replied'):(lang==='ko'?'접수':'Received')}</span></span></div>
       <div class="bi-preview">${esc(item.name)} · ${esc(item.message).slice(0,50)}</div>
+      ${replyHtml}
     </div>`;
   }).join('');
 }

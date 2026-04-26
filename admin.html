@@ -9,83 +9,126 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --cream: #FDFAF5; --sand: #F5ECD7; --gold: #E8C896;
-      --terra: #C4714A; --brown: #3D2B1F; --brown-light: #8C6B57;
+      --terra: #C4714A; --terra-dark: #A85B38;
+      --brown: #3D2B1F; --brown-light: #8C6B57;
       --shadow: rgba(61,43,31,.10);
     }
     body { font-family: 'Noto Sans KR', sans-serif; background: var(--cream); color: var(--brown); min-height: 100vh; }
     header {
       background: var(--brown); color: #fff; padding: 1rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10;
     }
-    header h1 { font-size: 1.1rem; }
+    header h1 { font-size: 1rem; font-weight: 600; }
     header a { color: var(--gold); font-size: .82rem; text-decoration: none; }
-    .login-wrap { max-width: 380px; margin: 5rem auto; padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 5px 30px var(--shadow); }
-    .login-wrap h2 { font-size: 1.1rem; margin-bottom: 1.2rem; }
+
+    /* LOGIN */
+    .login-wrap { max-width: 360px; margin: 6rem auto; padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 5px 30px var(--shadow); }
+    .login-wrap h2 { font-size: 1.05rem; margin-bottom: 1.2rem; }
     .login-wrap input { width: 100%; padding: .7rem 1rem; border: 1.5px solid var(--gold); border-radius: 8px; font-size: .9rem; font-family: inherit; outline: none; }
     .login-wrap input:focus { border-color: var(--terra); }
-    .btn { display: block; width: 100%; margin-top: .8rem; padding: .75rem; background: var(--terra); color: #fff; border: none; border-radius: 8px; font-size: .95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
-    .btn:hover { background: #A85B38; }
-    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.2rem; }
-    .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .stat { background: #fff; border-radius: 10px; padding: .8rem 1.2rem; box-shadow: 0 2px 12px var(--shadow); min-width: 110px; }
-    .stat-num { font-size: 1.7rem; font-weight: 700; color: var(--terra); }
-    .stat-label { font-size: .75rem; color: var(--brown-light); }
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 20px var(--shadow); }
-    thead { background: var(--brown); color: #fff; }
-    th { padding: .7rem 1rem; text-align: left; font-size: .78rem; font-weight: 500; white-space: nowrap; }
-    td { padding: .75rem 1rem; font-size: .82rem; border-bottom: 1px solid var(--sand); vertical-align: top; max-width: 220px; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #FDFAF5; }
-    .badge-priv { background: #F3F4F6; color: #374151; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; white-space: nowrap; }
-    .badge-pub  { background: #D1FAE5; color: #065F46; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; white-space: nowrap; }
-    .msg-cell { white-space: pre-wrap; word-break: break-word; max-height: 80px; overflow: hidden; cursor: pointer; }
-    .msg-cell.expanded { max-height: none; }
-    .reply-btns { display: flex; gap: .4rem; flex-wrap: wrap; }
-    .reply-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .65rem; border-radius: 7px; text-decoration: none; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+    .btn-login { display: block; width: 100%; margin-top: .8rem; padding: .75rem; background: var(--terra); color: #fff; border: none; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .btn-login:hover { background: var(--terra-dark); }
+    .err { color: #DC2626; font-size: .8rem; margin-top: .5rem; }
+
+    /* ADMIN */
+    .container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; }
+    .stats { display: flex; gap: .8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .stat { background: #fff; border-radius: 10px; padding: .7rem 1.1rem; box-shadow: 0 2px 10px var(--shadow); }
+    .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--terra); }
+    .stat-label { font-size: .72rem; color: var(--brown-light); }
+    .refresh-btn { margin-left: auto; padding: .45rem 1rem; border: 1.5px solid var(--gold); background: transparent; border-radius: 8px; font-size: .78rem; cursor: pointer; font-family: inherit; color: var(--brown); }
+    .refresh-btn:hover { background: var(--sand); }
+
+    /* CARDS */
+    .card {
+      background: #fff; border-radius: 14px; margin-bottom: 1rem;
+      box-shadow: 0 2px 14px var(--shadow); overflow: hidden;
+    }
+    .card-head {
+      padding: .9rem 1.2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem;
+      cursor: pointer; user-select: none;
+    }
+    .card-head:hover { background: var(--cream); }
+    .card-subject { font-weight: 600; font-size: .95rem; }
+    .card-meta { font-size: .75rem; color: var(--brown-light); margin-top: .2rem; }
+    .card-right { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+    .badge-priv { background: #F3F4F6; color: #374151; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+    .badge-pub  { background: #D1FAE5; color: #065F46; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+    .badge-replied { background: #DBEAFE; color: #1E40AF; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+    .card-date { font-size: .73rem; color: var(--brown-light); }
+    .chevron { font-size: .8rem; color: var(--brown-light); transition: transform .2s; }
+    .card.open .chevron { transform: rotate(180deg); }
+
+    .card-body { display: none; padding: 0 1.2rem 1.2rem; border-top: 1px solid var(--sand); }
+    .card.open .card-body { display: block; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .8rem; margin: .8rem 0 1rem; }
+    .info-row { font-size: .8rem; }
+    .info-label { font-weight: 600; color: var(--brown-light); font-size: .72rem; }
+    .msg-box { background: var(--cream); border-radius: 8px; padding: .75rem 1rem; font-size: .85rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word; margin-bottom: 1rem; }
+
+    /* REPLY */
+    .reply-section { border-top: 1px dashed var(--gold); padding-top: .9rem; }
+    .reply-section label { font-size: .78rem; font-weight: 600; color: var(--brown-light); display: block; margin-bottom: .4rem; }
+    .reply-section textarea {
+      width: 100%; padding: .7rem .9rem; border: 1.5px solid var(--gold); border-radius: 8px;
+      font-family: inherit; font-size: .85rem; resize: vertical; min-height: 80px; outline: none;
+    }
+    .reply-section textarea:focus { border-color: var(--terra); }
+    .reply-actions { display: flex; align-items: center; gap: .6rem; margin-top: .6rem; flex-wrap: wrap; }
+    .btn-save { padding: .5rem 1.2rem; background: var(--terra); color: #fff; border: none; border-radius: 8px; font-size: .83rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .btn-save:hover { background: var(--terra-dark); }
+    .btn-save:disabled { opacity: .55; cursor: default; }
+    .reply-opt-label { font-size: .75rem; color: var(--brown-light); margin-left: auto; }
+    .reply-btns { display: flex; gap: .4rem; }
+    .reply-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .38rem .75rem; border-radius: 7px; text-decoration: none; font-size: .75rem; font-weight: 600; }
     .reply-ka { background: #FEE500; color: #3A1D1D; }
     .reply-wa { background: #25D366; color: #fff; }
+    .save-msg { font-size: .75rem; color: #16A34A; }
+
     .empty { text-align: center; padding: 3rem; color: var(--brown-light); }
-    #loginSection, #adminSection { }
     .hidden { display: none !important; }
-    .err { color: #DC2626; font-size: .82rem; margin-top: .5rem; }
-    @media (max-width: 640px) {
-      table, thead, tbody, tr, th, td { display: block; }
-      thead { display: none; }
-      tr { border: 1px solid var(--sand); border-radius: 10px; margin-bottom: .7rem; padding: .5rem; }
-      td { border: none; padding: .3rem .5rem; }
-      td::before { content: attr(data-label); font-weight: 600; font-size: .72rem; color: var(--brown-light); display: block; }
+
+    @media (max-width: 520px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .reply-opt-label { display: none; }
     }
   </style>
 </head>
 <body>
 <header>
-  <h1>🏡 Hue Stay · 어드민</h1>
+  <h1>🏡 Hue Stay · 문의 관리</h1>
   <a href="/">← 홈으로</a>
 </header>
 
+<!-- LOGIN -->
 <div id="loginSection">
   <div class="login-wrap">
     <h2>관리자 로그인</h2>
     <input type="password" id="secretInput" placeholder="관리자 비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="btn" onclick="doLogin()">로그인</button>
-    <div class="err hidden" id="loginErr">비밀번호가 올바르지 않습니다.</div>
+    <button class="btn-login" onclick="doLogin()">로그인</button>
+    <div class="err hidden" id="loginErr"></div>
   </div>
 </div>
 
+<!-- ADMIN -->
 <div id="adminSection" class="hidden">
   <div class="container">
     <div class="stats">
-      <div class="stat"><div class="stat-num" id="statTotal">-</div><div class="stat-label">전체 문의</div></div>
+      <div class="stat"><div class="stat-num" id="statTotal">-</div><div class="stat-label">전체</div></div>
       <div class="stat"><div class="stat-num" id="statPub">-</div><div class="stat-label">공개</div></div>
       <div class="stat"><div class="stat-num" id="statPriv">-</div><div class="stat-label">비공개</div></div>
+      <div class="stat"><div class="stat-num" id="statReplied">-</div><div class="stat-label">답변완료</div></div>
+      <button class="refresh-btn" onclick="fetchInquiries()">새로고침</button>
     </div>
-    <div id="tableWrap"></div>
+    <div id="cardList"></div>
   </div>
 </div>
 
 <script>
 const API_BASE = 'https://huestay-api.perfectjjong.workers.dev';
 let adminSecret = '';
+let posts = [];
 
 function doLogin() {
   const v = document.getElementById('secretInput').value.trim();
@@ -95,61 +138,124 @@ function doLogin() {
 }
 
 async function fetchInquiries() {
-  const url = `${API_BASE}/admin/inquiries?secret=${encodeURIComponent(adminSecret)}`;
+  const errEl = document.getElementById('loginErr');
+  errEl.classList.add('hidden');
   try {
-    const r = await fetch(url);
+    const r = await fetch(`${API_BASE}/admin/inquiries?secret=${encodeURIComponent(adminSecret)}`);
     const d = await r.json();
     if (!d.ok) {
-      document.getElementById('loginErr').classList.remove('hidden');
+      errEl.textContent = '비밀번호가 올바르지 않습니다.';
+      errEl.classList.remove('hidden');
       return;
     }
-    document.getElementById('loginErr').classList.add('hidden');
     document.getElementById('loginSection').classList.add('hidden');
     document.getElementById('adminSection').classList.remove('hidden');
-    renderTable(d.posts || []);
+    posts = d.posts || [];
+    renderCards();
   } catch {
-    document.getElementById('loginErr').textContent = '서버 오류. 잠시 후 다시 시도해주세요.';
-    document.getElementById('loginErr').classList.remove('hidden');
+    errEl.textContent = '서버 오류. 잠시 후 다시 시도해주세요.';
+    errEl.classList.remove('hidden');
   }
 }
 
-function renderTable(posts) {
-  const pub  = posts.filter(p => !p.isPrivate).length;
-  const priv = posts.filter(p =>  p.isPrivate).length;
-  document.getElementById('statTotal').textContent = posts.length;
-  document.getElementById('statPub').textContent   = pub;
-  document.getElementById('statPriv').textContent  = priv;
+function renderCards() {
+  const total   = posts.length;
+  const pub     = posts.filter(p => !p.isPrivate).length;
+  const priv    = posts.filter(p =>  p.isPrivate).length;
+  const replied = posts.filter(p =>  p.reply).length;
+  document.getElementById('statTotal').textContent   = total;
+  document.getElementById('statPub').textContent     = pub;
+  document.getElementById('statPriv').textContent    = priv;
+  document.getElementById('statReplied').textContent = replied;
 
+  const el = document.getElementById('cardList');
   if (!posts.length) {
-    document.getElementById('tableWrap').innerHTML = '<div class="empty">📋 아직 접수된 문의가 없습니다.</div>';
+    el.innerHTML = '<div class="empty">📋 아직 접수된 문의가 없습니다.</div>';
     return;
   }
 
-  const rows = [...posts].reverse().map(p => {
-    const wa = p.contact ? `<a class="reply-btn reply-wa" href="https://wa.me/${p.contact.replace(/[^0-9]/g,'')}" target="_blank">📱 왓츠앱</a>` : '';
-    const ka = `<a class="reply-btn reply-ka" href="https://open.kakao.com/o/search#perfectjjong" target="_blank">💬 카톡</a>`;
+  el.innerHTML = [...posts].reverse().map(p => {
     const badge = p.isPrivate
       ? `<span class="badge-priv">🔒 비공개</span>`
       : `<span class="badge-pub">🌐 공개</span>`;
-    return `<tr>
-      <td data-label="날짜">${esc(p.date)}</td>
-      <td data-label="이름">${esc(p.name)} ${badge}</td>
-      <td data-label="연락처">${esc(p.contact||'-')}</td>
-      <td data-label="이메일">${esc(p.email||'-')}</td>
-      <td data-label="회사명">${esc(p.company||'-')}</td>
-      <td data-label="제목"><strong>${esc(p.subject)}</strong></td>
-      <td data-label="내용"><div class="msg-cell" onclick="this.classList.toggle('expanded')">${esc(p.message)}</div></td>
-      <td data-label="답변">${wa}${ka}</td>
-    </tr>`;
-  }).join('');
+    const repliedBadge = p.reply ? `<span class="badge-replied">✅ 답변완료</span>` : '';
+    const waHref = p.contact
+      ? `https://wa.me/${p.contact.replace(/[^0-9]/g,'')}`
+      : 'https://wa.me/';
+    const infoRows = [
+      ['이름', p.name], ['연락처', p.contact||'-'],
+      ['이메일', p.email||'-'], ['회사명', p.company||'-'],
+    ].map(([l,v]) => `<div class="info-row"><div class="info-label">${l}</div>${esc(v)}</div>`).join('');
 
-  document.getElementById('tableWrap').innerHTML = `
-    <table>
-      <thead><tr>
-        <th>날짜</th><th>이름</th><th>연락처</th><th>이메일</th><th>회사명</th><th>제목</th><th>내용</th><th>답변</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+    return `<div class="card" id="card-${p.id}">
+      <div class="card-head" onclick="toggleCard(${p.id})">
+        <div>
+          <div class="card-subject">${esc(p.subject)}</div>
+          <div class="card-meta">${esc(p.name)} · ${p.date}</div>
+        </div>
+        <div class="card-right">
+          ${badge}${repliedBadge}
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">${infoRows}</div>
+        <div class="msg-box">${esc(p.message)}</div>
+        <div class="reply-section">
+          <label>💬 게시판 답변</label>
+          <textarea id="reply-${p.id}" placeholder="답변을 입력하세요...">${esc(p.reply||'')}</textarea>
+          <div class="reply-actions">
+            <button class="btn-save" onclick="saveReply(${p.id})" id="btn-${p.id}">답변 저장</button>
+            <span class="save-msg hidden" id="msg-${p.id}">저장되었습니다 ✓</span>
+            <span class="reply-opt-label">선택 — 앱으로 직접 보내기:</span>
+            <div class="reply-btns">
+              <a class="reply-btn reply-wa" href="${waHref}" target="_blank">📱 왓츠앱</a>
+              <a class="reply-btn reply-ka" href="https://open.kakao.com/o/search#perfectjjong" target="_blank">💬 카카오</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  document.getElementById(`card-${id}`).classList.toggle('open');
+}
+
+async function saveReply(id) {
+  const textarea = document.getElementById(`reply-${id}`);
+  const btn = document.getElementById(`btn-${id}`);
+  const msg = document.getElementById(`msg-${id}`);
+  const reply = textarea.value.trim();
+  btn.disabled = true;
+  try {
+    const r = await fetch(`${API_BASE}/admin/reply?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, reply }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      // Update local state
+      const post = posts.find(p => p.id === id);
+      if (post) post.reply = reply;
+      msg.classList.remove('hidden');
+      setTimeout(() => msg.classList.add('hidden'), 3000);
+      // Update badge
+      const card = document.getElementById(`card-${id}`);
+      const repliedBadge = card.querySelector('.badge-replied');
+      if (reply && !repliedBadge) {
+        card.querySelector('.card-right').insertAdjacentHTML('afterbegin', `<span class="badge-replied">✅ 답변완료</span>`);
+      }
+      // Update stat
+      document.getElementById('statReplied').textContent = posts.filter(p => p.reply).length;
+    }
+  } catch {
+    alert('저장 실패. 다시 시도해주세요.');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

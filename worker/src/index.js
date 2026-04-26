@@ -1,16 +1,12 @@
 /**
  * Hue Stay Submit Worker
- *  POST /submit           → Google Sheets append (tab routed by type)
- *  GET  /inquiries        → 공개 문의 목록 (비공개는 마스킹)
- *  GET  /admin/inquiries  → 전체 문의 목록 (ADMIN_SECRET 필요)
+ *  POST /submit              → Google Sheets append (tab routed by type)
+ *  GET  /inquiries           → 공개 문의 목록 (비공개 마스킹)
+ *  GET  /admin/inquiries     → 전체 문의 목록 (ADMIN_SECRET 필요)
+ *  POST /admin/reply         → 문의 답변 저장 (ADMIN_SECRET 필요)
  *
- * Required secrets:
- *   GOOGLE_SA_JSON     - Service Account JSON
- *   SHEET_ID           - Google Sheet ID
- *   ALLOWED_ORIGIN     - CORS 허용 origin
- *   ADMIN_SECRET       - 어드민 페이지 접근 토큰
- *   TELEGRAM_BOT_TOKEN - 텔레그램 봇 토큰 (선택)
- *   TELEGRAM_CHAT_ID   - 텔레그램 chat_id (선택)
+ * Secrets: GOOGLE_SA_JSON, SHEET_ID, ALLOWED_ORIGIN, ADMIN_SECRET,
+ *          TELEGRAM_BOT_TOKEN (선택), TELEGRAM_CHAT_ID (선택)
  */
 
 const TABS = {
@@ -22,9 +18,9 @@ const TABS = {
   },
   inquiry: {
     name: '문의',
-    headers: ['접수일시','이름','연락처','이메일','회사명','제목','내용','공개여부'],
+    headers: ['접수일시','이름','연락처','이메일','회사명','제목','내용','공개여부','답변'],
     pick: (b) => [b.name||'', b.contact||'', b.email||'', b.company||'',
-                  b.subject||'', b.message||'', b.isPrivate ? '비공개' : '공개'],
+                  b.subject||'', b.message||'', b.isPrivate ? '비공개' : '공개', ''],
   },
   other: {
     name: '기타',
@@ -52,7 +48,7 @@ export default {
           return {
             id: i + 1, date: r[0] || '', name: r[1] || '', contact: r[2] || '',
             email: r[3] || '', company: r[4] || '', subject: r[5] || '',
-            message: r[6] || '', isPrivate: false,
+            message: r[6] || '', isPrivate: false, reply: r[8] || '',
           };
         });
         return json({ ok: true, posts }, 200, cors);
@@ -74,8 +70,38 @@ export default {
           id: i + 1, date: r[0] || '', name: r[1] || '', contact: r[2] || '',
           email: r[3] || '', company: r[4] || '', subject: r[5] || '',
           message: r[6] || '', isPrivate: (r[7] || '공개') === '비공개',
+          reply: r[8] || '',
         }));
         return json({ ok: true, posts }, 200, cors);
+      } catch (e) {
+        return json({ ok: false, error: String(e?.message || e) }, 500, cors);
+      }
+    }
+
+    /* ── POST /admin/reply : 답변 저장 ── */
+    if (url.pathname === '/admin/reply' && request.method === 'POST') {
+      const secret = url.searchParams.get('secret');
+      if (!env.ADMIN_SECRET || secret !== env.ADMIN_SECRET) {
+        return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      }
+      let body;
+      try { body = await request.json(); }
+      catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+
+      try {
+        const token = await getAccessToken(env);
+        // id는 1-based 데이터 행 번호. 시트 행 번호 = id + 1 (1행이 헤더)
+        // 답변은 I열 (9번째 컬럼)
+        const sheetRow = body.id + 1;
+        const tab = encodeURIComponent('문의');
+        const wurl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!I${sheetRow}?valueInputOption=USER_ENTERED`;
+        const r = await fetch(wurl, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: [[body.reply || '']] }),
+        });
+        if (!r.ok) throw new Error(`sheets update ${r.status}: ${await r.text()}`);
+        return json({ ok: true }, 200, cors);
       } catch (e) {
         return json({ ok: false, error: String(e?.message || e) }, 500, cors);
       }
@@ -154,7 +180,7 @@ async function getRows(env, token, tabName) {
 async function appendRow(env, token, tabName, row, colCount) {
   const tab = encodeURIComponent(tabName);
   const range = `${tab}!A:${COL_LETTER(colCount)}`;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${range}:append?valueInputOption=USER_ENTERED`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${range}:append?valueInputOption=RAW`;
   const r = await fetch(url, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -175,21 +201,21 @@ async function ensureTabAndHeader(env, token, tabName, headers) {
     const b = await fetch(batchUrl, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [{ addSheet: { properties: { title: tabName } } }]
-      }),
+      body: JSON.stringify({ requests: [{ addSheet: { properties: { title: tabName } } }] }),
     });
     if (!b.ok) throw new Error(`sheets addSheet ${b.status}: ${await b.text()}`);
   }
 
+  // 전체 헤더 행 비교하여 필요시 업데이트
   const tab = encodeURIComponent(tabName);
-  const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1`;
+  const lastCol = COL_LETTER(headers.length);
+  const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1:${lastCol}1`;
   const r = await fetch(readUrl, { headers: { 'Authorization': `Bearer ${token}` } });
   if (!r.ok) throw new Error(`sheets read ${r.status}: ${await r.text()}`);
   const data = await r.json();
-  const a1 = (data.values && data.values[0] && data.values[0][0]) || '';
-  if (a1 === headers[0]) return;
-  const lastCol = COL_LETTER(headers.length);
+  const existing = (data.values && data.values[0]) || [];
+  if (headers.every((h, i) => existing[i] === h)) return;
+
   const wurl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values/${tab}!A1:${lastCol}1?valueInputOption=USER_ENTERED`;
   const w = await fetch(wurl, {
     method: 'PUT',
@@ -218,7 +244,7 @@ async function notifyTelegram(env, body) {
   });
 }
 
-/* ───── Google OAuth2: Service Account JWT → access_token ───── */
+/* ───── Google OAuth2 ───── */
 
 async function getAccessToken(env) {
   const sa = JSON.parse(env.GOOGLE_SA_JSON);
@@ -228,24 +254,18 @@ async function getAccessToken(env) {
     iss: sa.client_email,
     scope: 'https://www.googleapis.com/auth/spreadsheets',
     aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600,
+    iat: now, exp: now + 3600,
   };
   const unsigned = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(claims))}`;
   const signature = await rs256Sign(unsigned, sa.private_key);
   const jwt = `${unsigned}.${signature}`;
-
   const r = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt,
-    }),
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: jwt }),
   });
   if (!r.ok) throw new Error(`oauth ${r.status}: ${await r.text()}`);
-  const j = await r.json();
-  return j.access_token;
+  return (await r.json()).access_token;
 }
 
 function b64url(s) {
@@ -257,22 +277,12 @@ function b64url(s) {
 
 async function rs256Sign(input, pemPrivateKey) {
   const key = await importPkcs8(pemPrivateKey);
-  const sig = await crypto.subtle.sign(
-    { name: 'RSASSA-PKCS1-v1_5' },
-    key,
-    new TextEncoder().encode(input)
-  );
+  const sig = await crypto.subtle.sign({ name: 'RSASSA-PKCS1-v1_5' }, key, new TextEncoder().encode(input));
   return b64url(new Uint8Array(sig));
 }
 
 async function importPkcs8(pem) {
   const body = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
   const der = Uint8Array.from(atob(body), c => c.charCodeAt(0));
-  return crypto.subtle.importKey(
-    'pkcs8',
-    der,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
+  return crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
 }
