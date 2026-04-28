@@ -505,6 +505,14 @@
       </div>
     </div>
 
+    <!-- 번역 자동 보완 -->
+    <div style="margin:1.2rem 0 .5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+      <button class="btn-save" id="translateBtn" onclick="autoTranslateReviews()" style="background:#6B7FC4;width:auto;padding:.55rem 1.4rem;font-size:.85rem">
+        🌐 번역 자동 보완
+      </button>
+      <span style="font-size:.78rem;color:#888">한국어만 있으면 영어로, 영어만 있으면 한국어로 자동 번역합니다.</span>
+    </div>
+
     <!-- 등록된 후기 목록 -->
     <div id="reviewsList"></div>
   </div>
@@ -1406,6 +1414,22 @@ async function saveReviewsMeta() {
   });
   const d = await r.json();
   if (!d.ok) throw new Error(d.error || '저장 실패');
+}
+
+async function autoTranslateReviews() {
+  const btn = document.getElementById('translateBtn');
+  btn.disabled = true;
+  btn.textContent = '🔄 번역 중...';
+  try {
+    await saveReviewsMeta();
+    await fetchReviews();
+    btn.textContent = '✅ 완료!';
+    setTimeout(() => { btn.textContent = '🌐 번역 자동 보완'; btn.disabled = false; }, 2000);
+  } catch (e) {
+    btn.textContent = '❌ 오류';
+    btn.disabled = false;
+    alert('오류: ' + e.message);
+  }
 }
 </script>
 </body>

@@ -229,13 +229,29 @@ export default {
       return json({ ok: true }, 200, cors);
     }
 
-    /* ── POST /admin/reviews : 후기 배열 저장 ── */
+    /* ── POST /admin/reviews : 후기 배열 저장 (번역 자동 보완) ── */
     if (url.pathname === '/admin/reviews' && request.method === 'POST') {
       if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
       if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
       let body;
       try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
       if (!Array.isArray(body.reviews)) return json({ ok: false, error: 'reviews array required' }, 400, cors);
+
+      /* AI 자동번역: 한쪽 언어만 있으면 반대쪽 채우기 */
+      if (env.AI) {
+        for (const rv of body.reviews) {
+          try {
+            if (rv.textKo && !rv.textEn) {
+              const r = await env.AI.run('@cf/meta/m2m100-1.2b', { text: rv.textKo, source_lang: 'ko', target_lang: 'en' });
+              rv.textEn = r.translated_text || '';
+            } else if (rv.textEn && !rv.textKo) {
+              const r = await env.AI.run('@cf/meta/m2m100-1.2b', { text: rv.textEn, source_lang: 'en', target_lang: 'ko' });
+              rv.textKo = r.translated_text || '';
+            }
+          } catch {}
+        }
+      }
+
       await env.SPACES_KV.put('reviews_config', JSON.stringify(body.reviews));
       return json({ ok: true }, 200, cors);
     }
