@@ -492,11 +492,11 @@
         </div>
 
         <div class="rev-field-full">
-          <label class="rev-label">후기 내용 (한국어) *</label>
+          <label class="rev-label">후기 내용 (한국어) * 둘 중 하나 필수</label>
           <textarea class="rev-textarea" id="addTextKo" placeholder="후기 내용을 입력하세요..."></textarea>
         </div>
         <div class="rev-field-full">
-          <label class="rev-label">후기 내용 (영어, 선택)</label>
+          <label class="rev-label">후기 내용 (영어) * 둘 중 하나 필수</label>
           <textarea class="rev-textarea" id="addTextEn" placeholder="English review text (optional)..."></textarea>
         </div>
 
@@ -1272,9 +1272,41 @@ function renderReviews() {
         </div>
       </div>
       <div class="rev-card-body">
-        <div class="rev-body-text">${esc(rv.textKo||'')}</div>
-        ${rv.textEn?`<div class="rev-body-text" style="font-size:.82rem;color:var(--brown-light)">${esc(rv.textEn)}</div>`:''}
-        <div style="margin:.8rem 0 .3rem;font-size:.73rem;font-weight:600;color:var(--brown-light)">후기 사진 (${(rv.photos||[]).length}/10)</div>
+        <div class="rev-fields" style="margin-bottom:.8rem">
+          <div>
+            <label class="rev-label">이름</label>
+            <input type="text" class="rev-input" id="ename-${idx}" value="${esc(rv.name||'')}">
+          </div>
+          <div>
+            <label class="rev-label">출처</label>
+            <select class="rev-select" id="evia-${idx}">
+              ${['Google Maps','KakaoTalk','WhatsApp','직접 등록'].map(v=>`<option${rv.via===v?' selected':''}>${v}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="rev-label">별점</label>
+            <div class="star-select" id="estars-${idx}">
+              ${[1,2,3,4,5].map(v=>`<button class="star-btn${(rv.rating||5)>=v?' on':''}" data-v="${v}" onclick="setEditStar(${idx},${v})">★</button>`).join('')}
+            </div>
+          </div>
+          <div>
+            <label class="rev-label">날짜</label>
+            <input type="text" class="rev-input" id="edate-${idx}" value="${esc(rv.date||'')}">
+          </div>
+          <div class="rev-field-full">
+            <label class="rev-label">후기 내용 (한국어)</label>
+            <textarea class="rev-textarea" id="etextko-${idx}">${esc(rv.textKo||'')}</textarea>
+          </div>
+          <div class="rev-field-full">
+            <label class="rev-label">후기 내용 (영어)</label>
+            <textarea class="rev-textarea" id="etexten-${idx}">${esc(rv.textEn||'')}</textarea>
+          </div>
+        </div>
+        <div style="margin-bottom:.8rem">
+          <button class="btn-save" style="width:auto;padding:.45rem 1.2rem;font-size:.82rem" onclick="saveEditReview(${idx})">💾 저장</button>
+          <span class="save-msg hidden" id="emsg-${idx}" style="margin-left:.6rem">저장됨 ✓</span>
+        </div>
+        <div style="margin:.4rem 0 .3rem;font-size:.73rem;font-weight:600;color:var(--brown-light)">후기 사진 (${(rv.photos||[]).length}/10)</div>
         <div class="img-gallery">
           ${(rv.photos||[]).map(p => `<div class="img-thumb-wrap">
             <img src="${esc(API_BASE + p.url)}" onerror="this.style.display='none'">
@@ -1303,6 +1335,32 @@ function toggleRevCard(idx) {
   document.getElementById(`rcard-${idx}`).classList.toggle('open');
 }
 
+function setEditStar(idx, v) {
+  reviewsData[idx].rating = v;
+  document.querySelectorAll(`#estars-${idx} .star-btn`).forEach(b => {
+    b.classList.toggle('on', parseInt(b.dataset.v) <= v);
+  });
+}
+
+async function saveEditReview(idx) {
+  const rv = reviewsData[idx];
+  rv.name   = document.getElementById(`ename-${idx}`).value.trim();
+  rv.via    = document.getElementById(`evia-${idx}`).value;
+  rv.date   = document.getElementById(`edate-${idx}`).value.trim();
+  rv.textKo = document.getElementById(`etextko-${idx}`).value.trim();
+  rv.textEn = document.getElementById(`etexten-${idx}`).value.trim();
+  if (!rv.name || (!rv.textKo && !rv.textEn)) {
+    alert('이름과 후기 내용(한국어 또는 영어 중 하나)은 필수입니다.');
+    return;
+  }
+  try {
+    await saveReviewsMeta();
+    const msg = document.getElementById(`emsg-${idx}`);
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 2000);
+  } catch (e) { alert('저장 실패: ' + e.message); }
+}
+
 function setAddStar(v) {
   addStarVal = v;
   document.querySelectorAll('#addStars .star-btn').forEach(b => {
@@ -1329,7 +1387,8 @@ function clearAddPhoto() {
 async function addReview() {
   const name = document.getElementById('addName').value.trim();
   const textKo = document.getElementById('addTextKo').value.trim();
-  if (!name || !textKo) { alert('이름과 후기 내용(한국어)은 필수입니다.'); return; }
+  const textEnCheck = document.getElementById('addTextEn').value.trim();
+  if (!name || (!textKo && !textEnCheck)) { alert('이름과 후기 내용(한국어 또는 영어 중 하나)은 필수입니다.'); return; }
 
   const btn = document.getElementById('addRevBtn');
   const msg = document.getElementById('addRevMsg');
