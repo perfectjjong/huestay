@@ -170,8 +170,20 @@ export default {
       const now = new Date();
       const date = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
       const id = 'rvp_' + crypto.randomUUID().replace(/-/g,'').slice(0,8);
+
+      // 한→영 자동 번역
+      let textEn = '';
+      if (env.AI) {
+        try {
+          const result = await env.AI.run('@cf/meta/m2m100-1.2b', {
+            text: textKo, source_lang: 'ko', target_lang: 'en',
+          });
+          textEn = result.translated_text || '';
+        } catch {}
+      }
+
       const pending = (await env.SPACES_KV.get('reviews_pending', 'json')) || [];
-      pending.push({ id, name, rating, textKo, photoUrl, via: '직접 작성', date, submittedAt: now.toISOString() });
+      pending.push({ id, name, rating, textKo, textEn, photoUrl, via: '직접 작성', date, submittedAt: now.toISOString() });
       await env.SPACES_KV.put('reviews_pending', JSON.stringify(pending));
       if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
         const msg = `⭐ 새 후기 대기\n이름: ${name}\n별점: ${'★'.repeat(rating)}\n내용: ${textKo.slice(0,100)}`;

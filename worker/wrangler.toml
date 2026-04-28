@@ -10,3 +10,6 @@ ALLOWED_ORIGIN = "*"   # 배포 후 https://huestay.pages.dev 로 변경 권장
 [[kv_namespaces]]
 binding = "SPACES_KV"
 id = "9849b57108f64678af612eded5f912f4"
+
+[ai]
+binding = "AI"
