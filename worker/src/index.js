@@ -146,6 +146,77 @@ export default {
       }
     }
 
+    /* ── POST /review-submit : 게스트 후기 제출 (공개) ── */
+    if (url.pathname === '/review-submit' && request.method === 'POST') {
+      if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
+      let name, rating, textKo, photoUrl = '';
+      try {
+        const fd = await request.formData();
+        name    = (fd.get('name') || '').toString().trim();
+        rating  = Math.min(5, Math.max(1, parseInt(fd.get('rating')) || 5));
+        textKo  = (fd.get('textKo') || '').toString().trim();
+        const file = fd.get('photo');
+        if (file && file.size) {
+          const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+          const ct2 = IMG_TYPES[ext] || 'image/jpeg';
+          const uid = crypto.randomUUID().replace(/-/g,'').slice(0,12);
+          const id2 = 'rvp_' + crypto.randomUUID().replace(/-/g,'').slice(0,8);
+          await env.SPACES_KV.put(`img:review:${id2}:${uid}`, await file.arrayBuffer(), { metadata: { contentType: ct2 } });
+          photoUrl = `/images/reviews/${id2}/${uid}`;
+          name = name || id2;
+        }
+      } catch { return json({ ok: false, error: 'invalid form data' }, 400, cors); }
+      if (!name || !textKo) return json({ ok: false, error: 'name and text required' }, 400, cors);
+      const now = new Date();
+      const date = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
+      const id = 'rvp_' + crypto.randomUUID().replace(/-/g,'').slice(0,8);
+      const pending = (await env.SPACES_KV.get('reviews_pending', 'json')) || [];
+      pending.push({ id, name, rating, textKo, photoUrl, via: '직접 작성', date, submittedAt: now.toISOString() });
+      await env.SPACES_KV.put('reviews_pending', JSON.stringify(pending));
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+        const msg = `⭐ 새 후기 대기\n이름: ${name}\n별점: ${'★'.repeat(rating)}\n내용: ${textKo.slice(0,100)}`;
+        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: msg }),
+        }).catch(()=>{});
+      }
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── GET /admin/reviews/pending : 대기 중 후기 목록 ── */
+    if (url.pathname === '/admin/reviews/pending' && request.method === 'GET') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const pending = (await env.SPACES_KV.get('reviews_pending', 'json')) || [];
+      return json({ ok: true, pending }, 200, cors);
+    }
+
+    /* ── POST /admin/reviews/approve/:id : 후기 승인 ── */
+    const approveMatch = url.pathname.match(/^\/admin\/reviews\/approve\/([^/]+)$/);
+    if (approveMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const rid = approveMatch[1];
+      const pending = (await env.SPACES_KV.get('reviews_pending', 'json')) || [];
+      const idx = pending.findIndex(r => r.id === rid);
+      if (idx === -1) return json({ ok: false, error: 'not found' }, 404, cors);
+      const [review] = pending.splice(idx, 1);
+      await env.SPACES_KV.put('reviews_pending', JSON.stringify(pending));
+      const published = (await env.SPACES_KV.get('reviews_config', 'json')) || [];
+      const { submittedAt, ...clean } = review;
+      published.push({ ...clean, photos: [] });
+      await env.SPACES_KV.put('reviews_config', JSON.stringify(published));
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── POST /admin/reviews/reject/:id : 후기 거절 ── */
+    const rejectMatch = url.pathname.match(/^\/admin\/reviews\/reject\/([^/]+)$/);
+    if (rejectMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const rid = rejectMatch[1];
+      const pending = (await env.SPACES_KV.get('reviews_pending', 'json')) || [];
+      await env.SPACES_KV.put('reviews_pending', JSON.stringify(pending.filter(r => r.id !== rid)));
+      return json({ ok: true }, 200, cors);
+    }
+
     /* ── POST /admin/reviews : 후기 배열 저장 ── */
     if (url.pathname === '/admin/reviews' && request.method === 'POST') {
       if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);

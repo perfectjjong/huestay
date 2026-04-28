@@ -568,6 +568,42 @@
     .review-photos img { width: 90px; height: 68px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: opacity .15s; }
     .review-photos img:hover { opacity: .85; }
 
+    /* ── 후기 작성 폼 ── */
+    .review-submit-wrap {
+      background: #fff; border-radius: 20px; padding: 1.8rem;
+      box-shadow: 0 4px 20px var(--shadow); margin-top: 2.4rem;
+    }
+    .review-submit-wrap h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.15rem;
+      color: var(--brown); margin-bottom: 1.2rem;
+    }
+    .rsf-star-row { display: flex; gap: .3rem; margin-bottom: .9rem; }
+    .rsf-star { font-size: 1.6rem; background: none; border: none; cursor: pointer;
+      color: #D1D5DB; transition: color .1s; padding: 0; line-height: 1; }
+    .rsf-star.on { color: #E8A020; }
+    .rsf-input, .rsf-textarea {
+      width: 100%; padding: .6rem .85rem; border: 1.5px solid var(--gold);
+      border-radius: 10px; font-family: inherit; font-size: .9rem;
+      color: var(--brown); outline: none; margin-bottom: .75rem;
+    }
+    .rsf-input:focus, .rsf-textarea:focus { border-color: var(--terra); }
+    .rsf-textarea { resize: vertical; min-height: 90px; }
+    .rsf-photo-label {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .4rem .9rem; border: 1.5px dashed var(--gold); border-radius: 8px;
+      font-size: .78rem; color: var(--brown-light); cursor: pointer;
+      background: var(--sand); transition: background .15s; margin-bottom: .9rem;
+    }
+    .rsf-photo-label:hover { background: var(--gold); }
+    .rsf-photo-name { font-size: .75rem; color: var(--terra); margin-left: .3rem; }
+    .rsf-submit {
+      width: 100%; padding: .75rem; background: var(--terra); color: #fff;
+      border: none; border-radius: 10px; font-size: .92rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: background .15s;
+    }
+    .rsf-submit:hover { background: var(--terra-dark); }
+    .rsf-submit:disabled { opacity: .6; cursor: default; }
+
     /* ── TOAST ── */
     .toast {
       position: fixed; bottom: 1.8rem; left: 50%;
@@ -736,6 +772,26 @@
       <a href="https://maps.app.goo.gl/JonpWNC3BM192m7dA" target="_blank" class="review-gmaps-btn">
         🗺️ <span data-ko="Google Maps에서 더 보기" data-en="View all reviews on Google Maps">Google Maps에서 더 보기</span>
       </a>
+    </div>
+
+    <!-- 게스트 후기 작성 폼 -->
+    <div class="review-submit-wrap">
+      <h3 data-ko="✍️ 후기 남기기" data-en="✍️ Write a Review">✍️ 후기 남기기</h3>
+      <div class="rsf-star-row" id="rsfStars">
+        <button class="rsf-star on" data-v="1" onclick="setGuestStar(1)">★</button>
+        <button class="rsf-star on" data-v="2" onclick="setGuestStar(2)">★</button>
+        <button class="rsf-star on" data-v="3" onclick="setGuestStar(3)">★</button>
+        <button class="rsf-star on" data-v="4" onclick="setGuestStar(4)">★</button>
+        <button class="rsf-star on" data-v="5" onclick="setGuestStar(5)">★</button>
+      </div>
+      <input  type="text"  class="rsf-input"    id="rsfName"  data-ko-placeholder="이름 *" data-en-placeholder="Name *" placeholder="이름 *">
+      <textarea            class="rsf-textarea"  id="rsfText"  data-ko-placeholder="숙소 이용 후기를 남겨주세요 *" data-en-placeholder="Share your experience *" placeholder="숙소 이용 후기를 남겨주세요 *"></textarea>
+      <div>
+        <label class="rsf-photo-label" for="rsfPhoto">📷 <span data-ko="사진 첨부 (선택)" data-en="Attach photo (optional)">사진 첨부 (선택)</span></label>
+        <span class="rsf-photo-name" id="rsfPhotoName"></span>
+        <input type="file" id="rsfPhoto" accept="image/*" style="display:none" onchange="document.getElementById('rsfPhotoName').textContent=this.files[0]?this.files[0].name:''">
+      </div>
+      <button class="rsf-submit" id="rsfBtn" onclick="submitGuestReview()" data-ko="후기 제출" data-en="Submit Review">후기 제출</button>
     </div>
   </div>
 </section>
@@ -1225,6 +1281,42 @@ function renderReviews(reviews) {
       </div>
     </div>`;
   }).join('');
+}
+
+/* 게스트 후기 작성 */
+let guestStarVal = 5;
+function setGuestStar(v) {
+  guestStarVal = v;
+  document.querySelectorAll('#rsfStars .rsf-star').forEach(b => b.classList.toggle('on', parseInt(b.dataset.v) <= v));
+}
+
+async function submitGuestReview() {
+  const name = document.getElementById('rsfName').value.trim();
+  const text = document.getElementById('rsfText').value.trim();
+  if (!name || !text) { showToast(lang==='ko'?'이름과 후기 내용을 입력해주세요.':'Please fill in name and review.'); return; }
+  const btn = document.getElementById('rsfBtn');
+  btn.disabled = true;
+  try {
+    const fd = new FormData();
+    fd.append('name', name);
+    fd.append('rating', guestStarVal);
+    fd.append('textKo', text);
+    const photo = document.getElementById('rsfPhoto').files[0];
+    if (photo) fd.append('photo', photo);
+    const r = await fetch(API_BASE_SPACES + '/review-submit', { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.ok) {
+      showToast(lang==='ko'?'후기가 제출되었습니다. 검토 후 게시됩니다 ✅':'Review submitted! Will be posted after review ✅');
+      document.getElementById('rsfName').value = '';
+      document.getElementById('rsfText').value = '';
+      document.getElementById('rsfPhoto').value = '';
+      document.getElementById('rsfPhotoName').textContent = '';
+      setGuestStar(5);
+    } else {
+      showToast(lang==='ko'?'오류가 발생했습니다. 다시 시도해주세요.':'Error. Please try again.');
+    }
+  } catch { showToast(lang==='ko'?'네트워크 오류. 다시 시도해주세요.':'Network error. Please try again.'); }
+  finally { btn.disabled = false; }
 }
 
 async function loadReviews() {

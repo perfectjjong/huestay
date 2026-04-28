@@ -225,6 +225,22 @@
     .rev-order-btn:hover { background: var(--gold); }
     .rev-order-btn:disabled { opacity: .3; cursor: default; }
 
+    /* PENDING REVIEWS */
+    .pending-section { background: #fff; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 2px 14px var(--shadow); margin-bottom: 1.6rem; }
+    .pending-section h3 { font-size: .95rem; font-weight: 600; margin-bottom: .9rem; }
+    .pending-card { border: 1.5px solid var(--gold); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: .8rem; background: var(--cream); }
+    .pending-card:last-child { margin-bottom: 0; }
+    .pending-meta { font-size: .75rem; color: var(--brown-light); margin-bottom: .4rem; }
+    .pending-name { font-weight: 700; font-size: .92rem; }
+    .pending-stars { color: #E8A020; font-size: .85rem; margin: .25rem 0; }
+    .pending-text { font-size: .85rem; line-height: 1.6; color: var(--brown); margin: .4rem 0 .8rem; white-space: pre-wrap; }
+    .pending-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .btn-approve { padding: .4rem 1rem; background: #16A34A; color: #fff; border: none; border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+    .btn-approve:hover { opacity: .85; }
+    .btn-reject { padding: .4rem 1rem; background: #FEE2E2; color: #DC2626; border: 1.5px solid #FCA5A5; border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .btn-reject:hover { background: #FECACA; }
+    .pending-badge { display: inline-flex; align-items: center; justify-content: center; background: #DC2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: .65rem; font-weight: 700; margin-left: .35rem; vertical-align: middle; }
+
     /* REVIEWS ADMIN */
     .review-add-box {
       background: #fff; border-radius: 14px; padding: 1.4rem;
@@ -329,7 +345,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="inquiries"    onclick="switchTab('inquiries')">📋 문의</button>
     <button class="tab-btn"        data-tab="reservations" onclick="switchTab('reservations')">📅 예약 현황</button>
-    <button class="tab-btn"        data-tab="reviews"      onclick="switchTab('reviews')">⭐ 후기</button>
+    <button class="tab-btn"        data-tab="reviews"      onclick="switchTab('reviews')">⭐ 후기<span id="pendingBadge" class="pending-badge hidden">0</span></button>
     <button class="tab-btn"        data-tab="spaces"       onclick="switchTab('spaces')">🏠 공간</button>
     <button class="tab-btn"        data-tab="settings"     onclick="switchTab('settings')">⚙️ 사이트 설정</button>
   </div>
@@ -413,6 +429,12 @@
 
   <!-- 후기 관리 탭 -->
   <div id="tabReviews" class="container hidden">
+
+    <!-- 대기 중 후기 -->
+    <div class="pending-section" id="pendingSection">
+      <h3>🕐 승인 대기 중 <span id="pendingCount" style="color:var(--brown-light);font-weight:400;font-size:.85rem"></span></h3>
+      <div id="pendingList"><div class="empty" style="padding:1rem">대기 중인 후기가 없습니다.</div></div>
+    </div>
 
     <!-- 새 후기 추가 폼 -->
     <div class="review-add-box">
@@ -522,7 +544,7 @@ function switchTab(tab) {
   Object.entries(TAB_IDS).forEach(([k,id]) => document.getElementById(id).classList.toggle('hidden', k !== tab));
   if (tab === 'reservations') fetchReservations();
   if (tab === 'spaces' && spacesData.length === 0) fetchSpaces();
-  if (tab === 'reviews') { fetchReviews(); renderAddReviewPhotos(); }
+  if (tab === 'reviews') { fetchReviews(); fetchPendingReviews(); renderAddReviewPhotos(); }
   if (tab === 'settings') fetchSettings();
 }
 
@@ -1073,6 +1095,74 @@ let reviewsData = [];
 let addStarVal = 5;
 let addPhotoFile = null;
 let addReviewPhotoFiles = [];
+
+/* ════════════════════════════
+   대기 중 후기 관리
+════════════════════════════ */
+let pendingReviews = [];
+
+async function fetchPendingReviews() {
+  try {
+    const r = await fetch(`${API_BASE}/admin/reviews/pending?secret=${encodeURIComponent(adminSecret)}`);
+    const d = await r.json();
+    if (d.ok) { pendingReviews = d.pending || []; renderPendingReviews(); }
+  } catch {}
+}
+
+function renderPendingReviews() {
+  const el = document.getElementById('pendingList');
+  const badge = document.getElementById('pendingBadge');
+  const count = document.getElementById('pendingCount');
+  count.textContent = `(${pendingReviews.length}건)`;
+  if (pendingReviews.length > 0) {
+    badge.textContent = pendingReviews.length;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+  if (!pendingReviews.length) {
+    el.innerHTML = '<div class="empty" style="padding:1rem">대기 중인 후기가 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = pendingReviews.map(rv => {
+    const stars = '★'.repeat(rv.rating||5) + '☆'.repeat(5-(rv.rating||5));
+    const photoHtml = rv.photoUrl
+      ? `<div style="margin:.4rem 0"><img src="${API_BASE}${esc(rv.photoUrl)}" style="height:70px;border-radius:8px;object-fit:cover" onerror="this.style.display='none'"></div>`
+      : '';
+    const submitted = rv.submittedAt ? new Date(rv.submittedAt).toLocaleString('ko-KR') : '';
+    return `<div class="pending-card">
+      <div class="pending-meta">제출: ${submitted}</div>
+      <div class="pending-name">${esc(rv.name)}</div>
+      <div class="pending-stars">${stars}</div>
+      <div class="pending-text">${esc(rv.textKo||'')}</div>
+      ${photoHtml}
+      <div class="pending-actions">
+        <button class="btn-approve" onclick="approveReview('${esc(rv.id)}')">✅ 승인 (메인 게시)</button>
+        <button class="btn-reject"  onclick="rejectReview('${esc(rv.id)}')">🗑️ 거절</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function approveReview(id) {
+  if (!confirm('이 후기를 메인 페이지에 게시하겠습니까?')) return;
+  try {
+    const r = await fetch(`${API_BASE}/admin/reviews/approve/${id}?secret=${encodeURIComponent(adminSecret)}`, { method: 'POST' });
+    const d = await r.json();
+    if (d.ok) { await fetchPendingReviews(); await fetchReviews(); }
+    else alert('승인 실패: ' + d.error);
+  } catch { alert('오류가 발생했습니다.'); }
+}
+
+async function rejectReview(id) {
+  if (!confirm('이 후기를 삭제하겠습니까?')) return;
+  try {
+    const r = await fetch(`${API_BASE}/admin/reviews/reject/${id}?secret=${encodeURIComponent(adminSecret)}`, { method: 'POST' });
+    const d = await r.json();
+    if (d.ok) await fetchPendingReviews();
+    else alert('거절 실패: ' + d.error);
+  } catch { alert('오류가 발생했습니다.'); }
+}
 
 /* ── 후기 사진 (추가 폼) ── */
 function renderAddReviewPhotos() {
