@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hue Stay — 사우디아라비아 한인 게스트하우스</title>
-  <meta name="description" content="사우디아라비아 리야드의 한인 게스트하우스. 한식 조식 제공, 카카오톡·왓츠앱으로 간편 예약.">
+  <meta name="description" content="사우디아라비아 리야드 한인 게스트하우스. 1박 SAR 575 — 식사·빨래·공항 픽업·드랍 완전 포함. 카드결제 가능. 카카오톡·왓츠앱으로 간편 예약.">
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="images/logo.jpg">
@@ -14,7 +14,7 @@
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://huestay.pages.dev">
   <meta property="og:title"       content="Hue Stay — 사우디아라비아 한인 게스트하우스">
-  <meta property="og:description" content="리야드에서 경험하는 따뜻한 한국의 감성. 한식 조식 제공, 카카오톡·왓츠앱으로 간편 예약.">
+  <meta property="og:description" content="리야드 한인 게스트하우스. 1박 SAR 575 — 식사·빨래·공항 픽업·드랍 포함. 카드결제 가능.">
   <meta property="og:image"       content="https://huestay.pages.dev/images/hero.jpg">
   <meta property="og:locale"      content="ko_KR">
   <meta property="og:site_name"   content="Hue Stay">
@@ -22,9 +22,33 @@
   <!-- Twitter Card (X 공유) -->
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="Hue Stay — 사우디아라비아 한인 게스트하우스">
-  <meta name="twitter:description" content="리야드에서 경험하는 따뜻한 한국의 감성. 한식 조식 제공, 카카오톡·왓츠앱으로 간편 예약.">
+  <meta name="twitter:description" content="리야드 한인 게스트하우스. 1박 SAR 575 — 식사·빨래·공항 픽업·드랍 포함. 카드결제 가능.">
   <meta name="twitter:image"       content="https://huestay.pages.dev/images/hero.jpg">
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": "Hue Stay",
+    "image": "https://huestay.pages.dev/images/hero.jpg",
+    "url": "https://huestay.pages.dev",
+    "telephone": "+966-56-981-4239",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Riyadh",
+      "addressCountry": "SA"
+    },
+    "priceRange": "SAR 575/night",
+    "amenityFeature": [
+      {"@type":"LocationFeatureSpecification","name":"Korean Breakfast Included"},
+      {"@type":"LocationFeatureSpecification","name":"Laundry Included"},
+      {"@type":"LocationFeatureSpecification","name":"Airport Pickup & Drop-off Included"},
+      {"@type":"LocationFeatureSpecification","name":"Card Payment Accepted"},
+      {"@type":"LocationFeatureSpecification","name":"Free Wi-Fi"},
+      {"@type":"LocationFeatureSpecification","name":"Korean-speaking Host"}
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -386,26 +410,22 @@
 
     /* ── LOCATION ── */
     #location { background: var(--cream); }
-    .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; }
-    .map-btn {
-      aspect-ratio: 4/3; border-radius: 20px; overflow: hidden;
-      position: relative; display: block; text-decoration: none;
-      background: linear-gradient(135deg, #6EA892, #3D7A65);
+    .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; }
+    .map-embed-wrap {
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 28px rgba(61,43,31,.13);
+      aspect-ratio: 4/3; background: var(--sand);
     }
-    .map-btn img {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; opacity: 0; transition: opacity .5s; filter: brightness(.75);
+    .map-embed-wrap iframe {
+      width: 100%; height: 100%; border: 0; display: block;
     }
-    .map-btn img.on { opacity: 1; }
-    .map-overlay {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: .8rem;
-      color: #fff; text-align: center;
+    .map-open-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      margin-top: .85rem; font-size: .82rem; font-weight: 600;
+      color: var(--terra); text-decoration: none;
+      transition: opacity .15s;
     }
-    .map-overlay .icon { font-size: 2.8rem; }
-    .map-overlay .title { font-family: 'Playfair Display', serif; font-size: 1.05rem; }
-    .map-overlay .hint { font-size: .78rem; opacity: .75; }
+    .map-open-link:hover { opacity: .75; text-decoration: underline; }
     .loc-items { display: flex; flex-direction: column; gap: 1.4rem; }
     .loc-item { display: flex; gap: .9rem; align-items: flex-start; }
     .loc-item .icon { font-size: 1.4rem; flex-shrink: 0; }
@@ -461,8 +481,24 @@
     .lb-close {
       position: absolute; top: .8rem; right: .8rem;
       background: rgba(0,0,0,.4); color: #fff; border: none;
-      border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: .95rem;
+      border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: .95rem; z-index: 10;
     }
+    .lb-nav {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+      background: rgba(0,0,0,.35); color: #fff; border: none; cursor: pointer;
+      font-size: 1.8rem; line-height: 1; width: 38px; height: 48px; border-radius: 6px;
+      transition: background .15s; display: none;
+    }
+    .lb-nav:hover { background: rgba(0,0,0,.6); }
+    .lb-prev { left: .5rem; }
+    .lb-next { right: .5rem; }
+    .lb-nav.visible { display: flex; align-items: center; justify-content: center; }
+    .lb-counter {
+      position: absolute; bottom: .5rem; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,.45); color: #fff; font-size: .72rem; padding: .15rem .55rem;
+      border-radius: 10px; display: none; z-index: 10;
+    }
+    .lb-counter.visible { display: block; }
 
     /* ── MODAL ── */
     .mo-ov {
@@ -476,6 +512,61 @@
     .mo-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: .25rem; }
     .mo-meta  { font-size: .76rem; color: var(--brown-light); margin-bottom: .9rem; }
     .mo-body  { font-size: .88rem; line-height: 1.72; }
+
+    /* ── PRICE CARD ── */
+    .price-card {
+      background: var(--brown); color: #fff;
+      border-radius: 20px; padding: 2rem 2.4rem;
+      display: flex; flex-direction: column; gap: 1rem;
+      max-width: 480px; margin: 0 auto 2.5rem;
+      text-align: center;
+    }
+    .price-main {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 700;
+      color: var(--gold); letter-spacing: 1px; line-height: 1.1;
+    }
+    .price-krw { font-size: .95rem; color: rgba(255,255,255,.55); margin-top: .2rem; }
+    .price-label { font-size: .72rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: .3rem; }
+    .price-includes {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem;
+    }
+    .pi-tag {
+      background: rgba(255,255,255,.1); color: rgba(255,255,255,.85);
+      padding: .28rem .8rem; border-radius: 20px; font-size: .78rem; font-weight: 500;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .price-note { font-size: .75rem; color: rgba(255,255,255,.38); }
+
+    /* ── REVIEWS ── */
+    #reviews { background: var(--sand); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.4rem; margin-top: .5rem; }
+    .review-card {
+      background: #fff; border-radius: 16px; padding: 1.5rem;
+      box-shadow: 0 3px 16px var(--shadow);
+    }
+    .review-stars { color: #E8A020; font-size: 1rem; letter-spacing: 2px; margin-bottom: .6rem; }
+    .review-text { font-size: .88rem; color: var(--brown); line-height: 1.75; margin-bottom: 1rem; font-style: italic; }
+    .review-author { display: flex; align-items: center; gap: .7rem; }
+    .review-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--terra); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem; flex-shrink: 0;
+    }
+    .review-name { font-weight: 700; font-size: .84rem; color: var(--brown); }
+    .review-via  { font-size: .7rem; color: var(--brown-light); display: flex; align-items: center; gap: .3rem; }
+    .review-gmaps-btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      margin-top: 1.8rem; padding: .55rem 1.3rem;
+      border: 1.5px solid var(--terra); border-radius: 24px;
+      color: var(--terra); text-decoration: none; font-size: .8rem; font-weight: 600;
+      transition: all .2s;
+    }
+    .review-gmaps-btn:hover { background: var(--terra); color: #fff; }
+    .review-photos { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+    .review-photos img { width: 90px; height: 68px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: opacity .15s; }
+    .review-photos img:hover { opacity: .85; }
 
     /* ── TOAST ── */
     .toast {
@@ -493,7 +584,7 @@
       .nav-links { display: none; }
       .hamburger { display: flex; }
       section { padding: 3rem 0; }
-      .about-grid, .res-grid, .inq-grid, .loc-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+      .about-grid, .res-grid, .inq-grid, .loc-grid { grid-template-columns: 1fr; gap: 1.4rem; }
       .res-btns { max-width: 100%; }
       .contact-row { flex-wrap: wrap; }
       .contact-item { min-width: calc(50% - .4rem); }
@@ -524,6 +615,7 @@
   <ul class="nav-links">
     <li><a href="#about"       data-ko="소개"  data-en="About">소개</a></li>
     <li><a href="#spaces"      data-ko="공간"  data-en="Spaces">공간</a></li>
+    <li><a href="#reviews"     data-ko="후기"  data-en="Reviews">후기</a></li>
     <li><a href="#reservation" data-ko="예약"  data-en="Reserve">예약</a></li>
     <li><a href="#inquiry"     data-ko="문의"  data-en="Inquiry">문의</a></li>
     <li><a href="#location"    data-ko="위치"  data-en="Location">위치</a></li>
@@ -539,6 +631,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="#about"       onclick="closeMobile()" data-ko="소개"  data-en="About">소개</a>
   <a href="#spaces"      onclick="closeMobile()" data-ko="공간"  data-en="Spaces">공간</a>
+  <a href="#reviews"     onclick="closeMobile()" data-ko="후기"  data-en="Reviews">후기</a>
   <a href="#reservation" onclick="closeMobile()" data-ko="예약"  data-en="Reserve">예약</a>
   <a href="#inquiry"     onclick="closeMobile()" data-ko="문의"  data-en="Inquiry">문의</a>
   <a href="#location"    onclick="closeMobile()" data-ko="위치"  data-en="Location">위치</a>
@@ -554,10 +647,19 @@
     <p class="hero-eyebrow">Saudi Arabia · Riyadh · Guesthouse</p>
     <h1 class="hero-title">HUE STAY</h1>
     <p class="hero-tagline">Where Every Shade Feels Like Home</p>
-    <p class="hero-sub" data-ko="사우디아라비아에서 경험하는 따뜻한 한국의 감성" data-en="A warm Korean touch in the heart of Saudi Arabia">사우디아라비아에서 경험하는 따뜻한 한국의 감성</p>
+    <p class="hero-sub" data-ko="리야드 출장·여행, 한식 조식과 한국말 통하는 호스트가 기다립니다" data-en="Korean host, home-style meals, and a warm welcome in the heart of Riyadh">리야드 출장·여행, 한식 조식과 한국말 통하는 호스트가 기다립니다</p>
     <div class="hero-btns">
       <a href="#reservation" class="btn btn-white" data-ko="예약 문의하기" data-en="Book Now">예약 문의하기</a>
       <a href="#spaces"      class="btn btn-ghost" data-ko="공간 둘러보기" data-en="Explore Spaces">공간 둘러보기</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:center;margin-top:1.6rem;font-size:.75rem;color:rgba(255,255,255,.72);font-weight:500">
+      <span>★ 한국인 호스트</span>
+      <span>·</span>
+      <span data-ko="식사·빨래·공항픽업 포함" data-en="Meals · Laundry · Airport Transfer Included">식사·빨래·공항픽업 포함</span>
+      <span>·</span>
+      <span data-ko="💳 카드결제 가능" data-en="💳 Card Payment OK">💳 카드결제 가능</span>
+      <span>·</span>
+      <span data-ko="SAR 575 / 약 ₩209,000" data-en="SAR 575 / night">SAR 575 / 약 ₩209,000</span>
     </div>
   </div>
   <div class="scroll-hint">SCROLL</div>
@@ -568,7 +670,7 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-photo">
-        <img src="images/about.jpg" alt="Hue Stay" onload="this.classList.add('on')" onerror="this.remove()">
+        <img src="images/about.jpg" alt="Hue Stay" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()">
       </div>
       <div>
         <p class="eyebrow">ABOUT US</p>
@@ -585,7 +687,9 @@
           <span class="feat" data-ko="한국어 OK" data-en="Korean Spoken">한국어 OK</span>
           <span class="feat" data-ko="무료 Wi-Fi" data-en="Free Wi-Fi">무료 Wi-Fi</span>
           <span class="feat" data-ko="에어컨" data-en="A/C">에어컨</span>
-          <span class="feat" data-ko="픽업 가능" data-en="Pickup">픽업 가능</span>
+          <span class="feat" data-ko="공항 픽업·드랍" data-en="Airport Transfer">공항 픽업·드랍</span>
+          <span class="feat" data-ko="💳 카드결제 가능" data-en="💳 Card Payment OK">💳 카드결제 가능</span>
+          <span class="feat" data-ko="빨래 포함" data-en="Laundry Included">빨래 포함</span>
         </div>
       </div>
     </div>
@@ -613,13 +717,28 @@
 <!-- GALLERY STRIP -->
 <div id="gallery">
   <div class="gallery-strip">
-    <div class="gstrip-item"><div class="gstrip-bg g1"></div><img src="images/gallery1.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
-    <div class="gstrip-item"><div class="gstrip-bg g2"></div><img src="images/gallery2.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
-    <div class="gstrip-item"><div class="gstrip-bg g3"></div><img src="images/gallery3.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
-    <div class="gstrip-item"><div class="gstrip-bg g4"></div><img src="images/gallery4.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
-    <div class="gstrip-item"><div class="gstrip-bg g5"></div><img src="images/gallery5.jpg" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g1"></div><img src="images/gallery1.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g2"></div><img src="images/gallery2.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g3"></div><img src="images/gallery3.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g4"></div><img src="images/gallery4.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
+    <div class="gstrip-item"><div class="gstrip-bg g5"></div><img src="images/gallery5.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
   </div>
 </div>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="container">
+    <p class="eyebrow">REVIEWS</p>
+    <h2 class="section-title" data-ko="게스트 후기" data-en="Guest Reviews">게스트 후기</h2>
+    <div class="divider"></div>
+    <div class="reviews-grid" id="reviewsGrid"></div>
+    <div style="text-align:center;margin-top:1.4rem" id="reviewsGmapsLink">
+      <a href="https://maps.app.goo.gl/JonpWNC3BM192m7dA" target="_blank" class="review-gmaps-btn">
+        🗺️ <span data-ko="Google Maps에서 더 보기" data-en="View all reviews on Google Maps">Google Maps에서 더 보기</span>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- RESERVATION -->
 <section id="reservation">
@@ -627,6 +746,23 @@
     <p class="eyebrow">RESERVATION</p>
     <h2 class="section-title" data-ko="예약 및 문의" data-en="Book Your Stay">예약 및 문의</h2>
     <div class="divider"></div>
+    <!-- 가격 카드 -->
+    <div class="price-card">
+      <div class="price-label" data-ko="1박 요금 (All-Inclusive)" data-en="1 Night — All-Inclusive">1박 요금 (All-Inclusive)</div>
+      <div>
+        <div class="price-main">SAR 575</div>
+        <div class="price-krw" data-ko="약 ₩209,000" data-en="≈ KRW 209,000">약 ₩209,000</div>
+      </div>
+      <div class="price-includes">
+        <span class="pi-tag" data-ko="🍚 식사 포함" data-en="🍚 Meals">🍚 식사 포함</span>
+        <span class="pi-tag" data-ko="👕 빨래 포함" data-en="👕 Laundry">👕 빨래 포함</span>
+        <span class="pi-tag" data-ko="🚗 공항 픽업·드랍" data-en="🚗 Airport Transfer">🚗 공항 픽업·드랍</span>
+        <span class="pi-tag" data-ko="💳 카드결제 가능" data-en="💳 Card Payment OK">💳 카드결제 가능</span>
+        <span class="pi-tag" data-ko="📶 무료 Wi-Fi" data-en="📶 Free Wi-Fi">📶 무료 Wi-Fi</span>
+      </div>
+      <div class="price-note" data-ko="인원·날짜에 따라 달라질 수 있습니다. 문의 후 확정." data-en="Price may vary by dates & guests. Confirm via inquiry.">인원·날짜에 따라 달라질 수 있습니다. 문의 후 확정.</div>
+    </div>
+
     <div class="res-grid">
       <div>
         <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem" data-ko="실시간으로 연락하세요" data-en="Get in Touch">실시간으로 연락하세요</h3>
@@ -640,7 +776,7 @@
             <div class="fg"><label data-ko="연락처" data-en="Contact">연락처</label><input type="text" name="contact" required data-ko="+82-10-XXXX-XXXX" data-en="+966-XX-XXXX-XXXX" placeholder="+82-10-XXXX-XXXX"></div>
           </div>
           <div class="frow">
-            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
+            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" required data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
             <div class="fg"><label data-ko="회사명" data-en="Company">회사명</label><input type="text" name="company" data-ko="회사명 (선택)" data-en="Company (optional)" placeholder="회사명 (선택)"></div>
           </div>
           <div class="frow">
@@ -694,7 +830,7 @@
             <div class="fg"><label data-ko="연락처" data-en="Contact">연락처</label><input type="text" name="contact" data-ko="+82-10-XXXX-XXXX" data-en="+966-XX-XXXX-XXXX" placeholder="+82-10-XXXX-XXXX"></div>
           </div>
           <div class="frow">
-            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
+            <div class="fg"><label data-ko="이메일" data-en="Email">이메일</label><input type="email" name="email" required data-ko="이메일 주소" data-en="your@email.com" placeholder="이메일 주소"></div>
             <div class="fg"><label data-ko="회사명" data-en="Company">회사명</label><input type="text" name="company" data-ko="회사명 (선택)" data-en="Company (optional)" placeholder="회사명 (선택)"></div>
           </div>
           <div class="fg"><label data-ko="제목" data-en="Subject">제목</label><input type="text" name="subject" required data-ko="문의 제목" data-en="Inquiry subject" placeholder="문의 제목"></div>
@@ -719,14 +855,21 @@
     <h2 class="section-title" data-ko="찾아오시는 길" data-en="How to Find Us">찾아오시는 길</h2>
     <div class="divider"></div>
     <div class="loc-grid">
-      <a class="map-btn" href="https://maps.app.goo.gl/JonpWNC3BM192m7dA" target="_blank">
-        <img src="images/map.jpg" onload="this.classList.add('on')" onerror="this.remove()">
-        <div class="map-overlay">
-          <div class="icon">🗺️</div>
-          <div class="title" data-ko="지도에서 보기" data-en="View on Map">지도에서 보기</div>
-          <div class="hint" data-ko="Google Maps에서 열립니다" data-en="Opens in Google Maps">Google Maps에서 열립니다</div>
+      <div>
+        <div class="map-embed-wrap">
+          <iframe
+            src="https://maps.google.com/maps?q=Hue+Stay+Riyadh&output=embed&hl=ko&z=15"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Hue Stay 위치">
+          </iframe>
         </div>
-      </a>
+        <a class="map-open-link" href="https://maps.app.goo.gl/JonpWNC3BM192m7dA" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span data-ko="Google Maps에서 크게 보기 →" data-en="Open in Google Maps →">Google Maps에서 크게 보기 →</span>
+        </a>
+      </div>
       <div class="loc-items">
         <div class="loc-item"><div class="icon">📍</div><div><h4 data-ko="위치" data-en="Location">위치</h4><p data-ko="사우디아라비아 리야드<br>지도에서 정확한 위치를 확인하세요." data-en="Riyadh, Saudi Arabia<br>See exact location on the map.">사우디아라비아 리야드<br>지도에서 정확한 위치를 확인하세요.</p></div></div>
         <div class="loc-item"><div class="icon">🕐</div><div><h4 data-ko="체크인/체크아웃" data-en="Check-in / Check-out">체크인/체크아웃</h4><p data-ko="체크인: 오후 3시 이후<br>체크아웃: 오전 11시 이전" data-en="Check-in: After 3:00 PM<br>Check-out: Before 11:00 AM">체크인: 오후 3시 이후<br>체크아웃: 오전 11시 이전</p></div></div>
@@ -766,7 +909,11 @@
 <div class="lb-ov" id="lbOv" onclick="closeLb(event)">
   <div class="lb-box">
     <button class="lb-close" onclick="closeLb()">✕</button>
-    <div class="lb-thumb" id="lbThumb"></div>
+    <div class="lb-thumb" id="lbThumb">
+      <button class="lb-nav lb-prev" id="lbPrev" onclick="lbNav(-1)">&#8249;</button>
+      <button class="lb-nav lb-next" id="lbNext" onclick="lbNav(1)">&#8250;</button>
+      <div class="lb-counter" id="lbCounter"></div>
+    </div>
     <div class="lb-body">
       <span class="lb-badge" id="lbBadge"></span>
       <h3 class="lb-title" id="lbTitle"></h3>
@@ -822,6 +969,7 @@ let filter = 'all';
 
 function setLang(l) {
   lang = l;
+  document.documentElement.lang = l === 'ko' ? 'ko' : 'en';
   document.querySelectorAll('[data-ko]').forEach(el => {
     const v = el.getAttribute('data-' + l);
     if (!v) return;
@@ -836,6 +984,7 @@ function setLang(l) {
   document.querySelectorAll('.filter-btn').forEach(b => { const v = b.getAttribute('data-'+l); if(v) b.textContent = v; });
   renderSpaces();
   renderBoard();
+  loadReviews();
 }
 
 /* NAV */
@@ -845,23 +994,30 @@ document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', 
 function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
 
 /* SPACES */
+function getImgs(s) { return s.imgs && s.imgs.length ? s.imgs : (s.img ? [s.img] : []); }
+
 function renderSpaces() {
   const list = filter === 'all' ? SPACES : SPACES.filter(s => s.cat === filter);
-  document.getElementById('spacesGrid').innerHTML = list.map(s => `
+  document.getElementById('spacesGrid').innerHTML = list.map(s => {
+    const imgs = getImgs(s);
+    const thumb = imgs[0] || '';
+    const n = lang==='ko'?s.nKo:s.nEn;
+    return `
     <div class="space-card" onclick="openLb('${s.id}')">
       <div class="thumb ${s.tc}">
-        <div class="thumb-icon"><div class="icon">${s.emoji}</div><div class="label">${lang==='ko'?s.nKo:s.nEn}</div></div>
-        <img src="${s.img}" alt="${lang==='ko'?s.nKo:s.nEn}" onload="this.classList.add('on')" onerror="this.remove()">
-        <div class="thumb-bar"><span>${lang==='ko'?s.nKo:s.nEn}</span></div>
+        <div class="thumb-icon"><div class="icon">${s.emoji}</div><div class="label">${n}</div></div>
+        ${thumb ? `<img src="${thumb}" alt="${n}" onload="this.classList.add('on')" onerror="this.remove()">` : ''}
+        <div class="thumb-bar"><span>${n}</span>${imgs.length>1?`<span style="font-size:.7rem;opacity:.8;margin-left:.4rem">📷${imgs.length}</span>`:''}
+        </div>
       </div>
       <div class="card-body">
         <span class="card-badge">${lang==='ko'?s.bKo:s.bEn}</span>
-        <h3 class="card-name">${lang==='ko'?s.nKo:s.nEn}</h3>
+        <h3 class="card-name">${n}</h3>
         <p class="card-desc">${(lang==='ko'?s.dKo:s.dEn).slice(0,68)}…</p>
         <span class="card-more">${lang==='ko'?'자세히 보기 →':'View details →'}</span>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -874,19 +1030,49 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 
 /* LIGHTBOX */
+let lbImgs = [], lbIdx = 0, lbSpace = null;
+
 function openLb(id) {
   const s = SPACES.find(x => x.id === id); if (!s) return;
-  const n = lang==='ko'?s.nKo:s.nEn;
-  document.getElementById('lbThumb').innerHTML = `
-    <div class="thumb ${s.tc}" style="width:100%;height:100%">
-      <div class="thumb-icon"><div class="icon" style="font-size:3.5rem">${s.emoji}</div></div>
-      <img src="${s.img}" alt="${n}" onload="this.classList.add('on')" onerror="this.remove()">
-    </div>`;
+  lbSpace = s;
+  lbImgs = getImgs(s);
+  lbIdx = 0;
+  renderLbSlide();
   document.getElementById('lbBadge').textContent = lang==='ko'?s.bKo:s.bEn;
-  document.getElementById('lbTitle').textContent = n;
+  document.getElementById('lbTitle').textContent = lang==='ko'?s.nKo:s.nEn;
   document.getElementById('lbDesc').textContent  = lang==='ko'?s.dKo:s.dEn;
   document.getElementById('lbOv').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function renderLbSlide() {
+  const s = lbSpace;
+  const n = lang==='ko'?s.nKo:s.nEn;
+  const multi = lbImgs.length > 1;
+  const img = lbImgs[lbIdx] || '';
+  const thumb = document.getElementById('lbThumb');
+  // 기존 img만 교체 (nav 버튼은 유지)
+  const existing = thumb.querySelector('.lb-slide-wrap');
+  const html = `<div class="lb-slide-wrap" style="position:absolute;inset:0;z-index:1">
+    <div class="thumb ${s.tc}" style="width:100%;height:100%">
+      <div class="thumb-icon"><div class="icon" style="font-size:3.5rem">${s.emoji}</div></div>
+      ${img ? `<img src="${img}" alt="${n}" onload="this.classList.add('on')" onerror="this.remove()">` : ''}
+    </div>
+  </div>`;
+  if (existing) existing.outerHTML = html;
+  else thumb.insertAdjacentHTML('afterbegin', html);
+  document.getElementById('lbPrev').classList.toggle('visible', multi);
+  document.getElementById('lbNext').classList.toggle('visible', multi);
+  const counter = document.getElementById('lbCounter');
+  counter.textContent = `${lbIdx+1} / ${lbImgs.length}`;
+  counter.classList.toggle('visible', multi);
+}
+
+function lbNav(dir) {
+  if (!lbImgs.length) return;
+  lbIdx = (lbIdx + dir + lbImgs.length) % lbImgs.length;
+  renderLbSlide();
+}
 }
 function closeLb(e) {
   if (e && !e.target.classList.contains('lb-ov') && !e.target.classList.contains('lb-close')) return;
@@ -1007,9 +1193,103 @@ function showToast(msg) {
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* REVIEWS */
+function renderReviews(reviews) {
+  const grid = document.getElementById('reviewsGrid');
+  if (!grid) return;
+  if (!reviews || !reviews.length) {
+    grid.innerHTML = '';
+    return;
+  }
+  grid.innerHTML = reviews.map(rv => {
+    const stars = '★'.repeat(rv.rating || 5) + '☆'.repeat(5 - (rv.rating || 5));
+    const initial = ((rv.name || '?')[0] || '?').toUpperCase();
+    const avatarHtml = rv.photoUrl
+      ? `<img src="${rv.photoUrl}" alt="${rv.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent='${initial}'">`
+      : '';
+    const viaIcon = rv.via === 'Google Maps' ? '🗺️' : rv.via === 'KakaoTalk' ? '💬' : '💬';
+    const text = lang === 'en' && rv.textEn ? rv.textEn : rv.textKo;
+    const photosHtml = rv.photos && rv.photos.length
+      ? `<div class="review-photos">${rv.photos.map(p => `<img src="${API_BASE_SPACES}${p.url}" loading="lazy" decoding="async" onerror="this.style.display='none'">`).join('')}</div>`
+      : '';
+    return `
+    <div class="review-card">
+      <div class="review-stars">${stars}</div>
+      <p class="review-text">"${text}"</p>
+      ${photosHtml}
+      <div class="review-author">
+        <div class="review-avatar">${avatarHtml || initial}</div>
+        <div>
+          <div class="review-name">${rv.name || ''}</div>
+          <div class="review-via">${viaIcon} ${rv.via || 'Google Maps'}${rv.date ? ' · ' + rv.date : ''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadReviews() {
+  try {
+    const r = await fetch(API_BASE_SPACES + '/reviews', { cache: 'no-store' });
+    const d = await r.json();
+    if (d.ok) renderReviews(d.reviews || []);
+  } catch {}
+}
+
+async function loadSiteConfig() {
+  try {
+    const r = await fetch(API_BASE_SPACES + '/site-config');
+    const d = await r.json();
+    if (!d.ok) return;
+    const c = d.config || {};
+    if (c.priceSar) {
+      document.querySelector('.price-main').textContent = 'SAR ' + c.priceSar;
+    }
+    if (c.priceKrw) {
+      const krwEl = document.querySelector('.price-krw');
+      const krwNum = Number(c.priceKrw).toLocaleString('ko-KR');
+      krwEl.setAttribute('data-ko', '약 ₩' + krwNum);
+      krwEl.setAttribute('data-en', '≈ KRW ' + krwNum);
+      krwEl.textContent = document.documentElement.lang === 'en' ? '≈ KRW ' + krwNum : '약 ₩' + krwNum;
+    }
+    if (c.heroCopyKo) {
+      const heroEl = document.querySelector('.hero-sub');
+      if (heroEl) {
+        heroEl.setAttribute('data-ko', c.heroCopyKo);
+        if (document.documentElement.lang !== 'en') heroEl.textContent = c.heroCopyKo;
+      }
+    }
+    if (c.heroCopyEn) {
+      const heroEl = document.querySelector('.hero-sub');
+      if (heroEl) {
+        heroEl.setAttribute('data-en', c.heroCopyEn);
+        if (document.documentElement.lang === 'en') heroEl.textContent = c.heroCopyEn;
+      }
+    }
+  } catch {}
+}
+
+async function loadGallery() {
+  try {
+    const r = await fetch(API_BASE_SPACES + '/gallery');
+    const d = await r.json();
+    if (!d.ok || !d.gallery) return;
+    const slots = d.gallery.filter(s => s.imageKey);
+    if (slots.length === 0) return;
+    const strip = document.querySelector('.gallery-strip');
+    strip.innerHTML = slots.map(s => {
+      const imgUrl = API_BASE_SPACES + '/images/gallery/' + s.id + '/' + s.imageKey;
+      return `<div class="gstrip-item"><div class="gstrip-bg"></div><img src="${imgUrl}" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>`;
+    }).join('');
+  } catch {}
+}
+
 /* INIT */
 renderSpaces();
 loadInquiries();
+loadReviews();
+loadSiteConfig();
+loadGallery();
 </script>
 </body>
 </html>

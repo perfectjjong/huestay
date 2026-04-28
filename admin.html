@@ -107,24 +107,24 @@
     .space-edit-card.open .sec-body { display: block; }
     .space-edit-card.open .chevron { transform: rotate(180deg); }
 
-    .img-row { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem; flex-wrap: wrap; }
-    .img-preview-wrap { flex-shrink: 0; }
-    .img-preview {
-      width: 140px; height: 100px; border-radius: 10px; object-fit: cover;
-      background: var(--sand); border: 2px dashed var(--gold); display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; overflow: hidden;
+    /* 사진 갤러리 */
+    .img-gallery { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .8rem; }
+    .img-thumb-wrap { position: relative; width: 110px; height: 80px; }
+    .img-thumb-wrap img { width: 110px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--gold); }
+    .img-thumb-del {
+      position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+      background: #DC2626; color: #fff; border: none; border-radius: 50%;
+      font-size: .7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;
     }
-    .img-preview img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 8px; }
-    .img-preview img.loaded { display: block; }
-    .img-upload-btn {
-      display: inline-block; margin-top: .5rem; padding: .35rem .8rem;
-      border: 1.5px solid var(--gold); border-radius: 7px; font-size: .78rem;
-      cursor: pointer; font-family: inherit; background: transparent; color: var(--brown);
-      transition: background .15s;
+    .img-thumb-del:hover { background: #b91c1c; }
+    .img-add-btn {
+      width: 110px; height: 80px; border: 2px dashed var(--gold); border-radius: 8px;
+      background: var(--sand); cursor: pointer; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .2rem; font-size: .72rem; color: var(--brown-light);
+      font-family: inherit; transition: background .15s;
     }
-    .img-upload-btn:hover { background: var(--sand); }
+    .img-add-btn:hover { background: var(--gold); }
     .img-upload-input { display: none; }
-    .img-changed-badge { display: none; font-size: .7rem; color: var(--terra); margin-top: .3rem; font-weight: 600; }
 
     .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
     .field-group label { display: block; font-size: .73rem; font-weight: 600; color: var(--brown-light); margin-bottom: .3rem; }
@@ -142,6 +142,162 @@
 
     .empty { text-align: center; padding: 3rem; color: var(--brown-light); }
     .hidden { display: none !important; }
+
+    /* RESERVATION TAB */
+    .res-admin-card {
+      background: #fff; border-radius: 14px; margin-bottom: .9rem;
+      box-shadow: 0 2px 12px var(--shadow); overflow: hidden;
+    }
+    .res-admin-head {
+      padding: .9rem 1.2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem;
+      cursor: pointer; user-select: none;
+    }
+    .res-admin-head:hover { background: var(--cream); }
+    .res-dates {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--sand); border-radius: 8px; padding: .28rem .8rem;
+      font-size: .8rem; font-weight: 700; color: var(--brown); margin-bottom: .3rem;
+    }
+    .res-dates-arrow { color: var(--terra); }
+    .res-admin-body { display: none; padding: 0 1.2rem 1.2rem; border-top: 1px solid var(--sand); }
+    .res-admin-card.open .res-admin-body { display: block; }
+    .res-admin-card.open .chevron { transform: rotate(180deg); }
+    .res-contact-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+    .res-contact-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .35rem .85rem; border-radius: 8px; font-size: .78rem; font-weight: 600;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .res-contact-btn:hover { opacity: .8; }
+    .res-wa  { background: #25D366; color: #fff; }
+    .res-ka  { background: #FEE500; color: #3A1D1D; }
+    .res-tel { background: var(--sand); color: var(--brown); border: 1.5px solid var(--gold); }
+    .badge-today { background: #FEF3C7; color: #92400E; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+    .badge-upcoming { background: #D1FAE5; color: #065F46; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+    .badge-past { background: #F3F4F6; color: #6B7280; font-size: .68rem; padding: .15rem .5rem; border-radius: 5px; }
+
+    /* SETTINGS TAB */
+    .settings-section { background: #fff; border-radius: 14px; padding: 1.4rem; box-shadow: 0 2px 14px var(--shadow); margin-bottom: 1.4rem; }
+    .settings-section h3 { font-size: .95rem; font-weight: 600; margin-bottom: 1rem; }
+    .set-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
+    .set-field-full { grid-column: 1 / -1; }
+    .set-label { display: block; font-size: .73rem; font-weight: 600; color: var(--brown-light); margin-bottom: .3rem; }
+    .set-input, .set-textarea {
+      width: 100%; padding: .55rem .75rem; border: 1.5px solid var(--gold);
+      border-radius: 8px; font-family: inherit; font-size: .85rem; outline: none; color: var(--brown);
+    }
+    .set-input:focus, .set-textarea:focus { border-color: var(--terra); }
+    .set-textarea { resize: vertical; min-height: 60px; }
+    .set-save-row { display: flex; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--gold); }
+
+    /* GALLERY ADMIN */
+    .gallery-admin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .8rem; }
+    .gallery-slot {
+      border-radius: 12px; overflow: hidden; aspect-ratio: 1;
+      position: relative; background: var(--sand); border: 2px solid var(--gold);
+    }
+    .gallery-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-slot-empty {
+      width: 100%; height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .3rem;
+      font-size: .7rem; color: var(--brown-light);
+    }
+    .gallery-slot-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: .4rem; opacity: 0; transition: opacity .2s;
+    }
+    .gallery-slot:hover .gallery-slot-overlay { opacity: 1; }
+    .gal-btn {
+      padding: .3rem .7rem; border-radius: 7px; font-size: .72rem; font-weight: 600;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .gal-btn-upload { background: #fff; color: var(--brown); }
+    .gal-btn-remove { background: #DC2626; color: #fff; }
+
+    /* REVIEW ORDER BUTTONS */
+    .rev-order-btns { display: flex; gap: .3rem; }
+    .rev-order-btn {
+      width: 28px; height: 28px; border-radius: 6px; border: 1.5px solid var(--gold);
+      background: var(--sand); cursor: pointer; font-size: .75rem; display: flex;
+      align-items: center; justify-content: center; transition: background .15s;
+    }
+    .rev-order-btn:hover { background: var(--gold); }
+    .rev-order-btn:disabled { opacity: .3; cursor: default; }
+
+    /* REVIEWS ADMIN */
+    .review-add-box {
+      background: #fff; border-radius: 14px; padding: 1.4rem;
+      box-shadow: 0 2px 14px var(--shadow); margin-bottom: 1.4rem;
+    }
+    .review-add-box h3 { font-size: .95rem; font-weight: 600; margin-bottom: 1rem; }
+    .rev-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
+    .rev-field-full { grid-column: 1 / -1; }
+    .rev-label { display: block; font-size: .73rem; font-weight: 600; color: var(--brown-light); margin-bottom: .3rem; }
+    .rev-input, .rev-select, .rev-textarea {
+      width: 100%; padding: .55rem .75rem; border: 1.5px solid var(--gold);
+      border-radius: 8px; font-family: inherit; font-size: .85rem; outline: none; color: var(--brown);
+    }
+    .rev-input:focus, .rev-select:focus, .rev-textarea:focus { border-color: var(--terra); }
+    .rev-textarea { resize: vertical; min-height: 70px; }
+    .star-select { display: flex; gap: .3rem; margin-top: .2rem; }
+    .star-btn {
+      font-size: 1.3rem; background: none; border: none; cursor: pointer;
+      color: #D1D5DB; transition: color .1s; padding: 0;
+    }
+    .star-btn.on { color: #E8A020; }
+
+    .rev-photo-row { display: flex; align-items: center; gap: .8rem; margin-top: .3rem; }
+    .rev-avatar-preview {
+      width: 52px; height: 52px; border-radius: 50%; object-fit: cover;
+      background: var(--terra); display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 1.1rem; overflow: hidden; flex-shrink: 0;
+      border: 2px solid var(--gold);
+    }
+    .rev-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .rev-photo-btns { display: flex; flex-direction: column; gap: .3rem; }
+    .btn-photo-upload {
+      padding: .35rem .8rem; background: var(--sand); border: 1.5px solid var(--gold);
+      border-radius: 7px; font-size: .75rem; font-weight: 600; cursor: pointer;
+      font-family: inherit; color: var(--brown); transition: background .15s;
+    }
+    .btn-photo-upload:hover { background: var(--gold); }
+    .btn-photo-remove {
+      padding: .3rem .7rem; background: #FEE2E2; border: 1.5px solid #FCA5A5;
+      border-radius: 7px; font-size: .72rem; cursor: pointer; font-family: inherit;
+      color: #DC2626; display: none;
+    }
+
+    .review-card-admin {
+      background: #fff; border-radius: 14px; margin-bottom: .9rem;
+      box-shadow: 0 2px 12px var(--shadow); overflow: hidden;
+    }
+    .rev-card-head {
+      padding: .85rem 1.2rem; display: flex; align-items: center; gap: .8rem;
+      cursor: pointer; user-select: none;
+    }
+    .rev-card-head:hover { background: var(--cream); }
+    .rev-card-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      object-fit: cover; background: var(--terra); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem; overflow: hidden;
+    }
+    .rev-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .rev-card-info { flex: 1; }
+    .rev-card-name { font-weight: 600; font-size: .9rem; }
+    .rev-card-meta { font-size: .72rem; color: var(--brown-light); margin-top: .1rem; }
+    .rev-card-stars { color: #E8A020; font-size: .85rem; }
+    .rev-card-body { display: none; padding: 0 1.2rem 1.2rem; border-top: 1px solid var(--sand); }
+    .review-card-admin.open .rev-card-body { display: block; }
+    .review-card-admin.open .chevron { transform: rotate(180deg); }
+    .rev-body-text { background: var(--cream); border-radius: 8px; padding: .75rem 1rem; font-size: .85rem; line-height: 1.65; font-style: italic; margin: .8rem 0; }
+    .rev-del-btn {
+      padding: .4rem .9rem; background: #FEE2E2; border: 1.5px solid #FCA5A5;
+      border-radius: 8px; font-size: .78rem; cursor: pointer; font-family: inherit; color: #DC2626;
+      transition: background .15s;
+    }
+    .rev-del-btn:hover { background: #FECACA; }
 
     @media (max-width: 520px) {
       .info-grid { grid-template-columns: 1fr; }
@@ -171,8 +327,11 @@
 <div id="adminSection" class="hidden">
   <!-- TAB NAV -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('inquiries')">📋 문의 관리</button>
-    <button class="tab-btn" onclick="switchTab('spaces')">🏠 공간 관리</button>
+    <button class="tab-btn active" data-tab="inquiries"    onclick="switchTab('inquiries')">📋 문의</button>
+    <button class="tab-btn"        data-tab="reservations" onclick="switchTab('reservations')">📅 예약 현황</button>
+    <button class="tab-btn"        data-tab="reviews"      onclick="switchTab('reviews')">⭐ 후기</button>
+    <button class="tab-btn"        data-tab="spaces"       onclick="switchTab('spaces')">🏠 공간</button>
+    <button class="tab-btn"        data-tab="settings"     onclick="switchTab('settings')">⚙️ 사이트 설정</button>
   </div>
 
   <!-- 문의 관리 탭 -->
@@ -185,6 +344,147 @@
       <button class="refresh-btn" onclick="fetchInquiries()">새로고침</button>
     </div>
     <div id="cardList"></div>
+  </div>
+
+  <!-- 예약 현황 탭 -->
+  <div id="tabReservations" class="container hidden">
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="resStatTotal">-</div><div class="stat-label">전체</div></div>
+      <div class="stat"><div class="stat-num" id="resStatUpcoming">-</div><div class="stat-label">예정</div></div>
+      <div class="stat"><div class="stat-num" id="resStatToday">-</div><div class="stat-label">오늘 체크인</div></div>
+      <button class="refresh-btn" onclick="fetchReservations()">새로고침</button>
+    </div>
+    <div id="resList"></div>
+  </div>
+
+  <!-- 사이트 설정 탭 -->
+  <div id="tabSettings" class="container hidden">
+
+    <!-- 가격 설정 -->
+    <div class="settings-section">
+      <h3>💰 요금 설정</h3>
+      <div class="set-grid">
+        <div>
+          <label class="set-label">1박 요금 (SAR)</label>
+          <input type="number" class="set-input" id="setPriceSar" placeholder="575">
+        </div>
+        <div>
+          <label class="set-label">1박 요금 (원화 ₩)</label>
+          <input type="number" class="set-input" id="setPriceKrw" placeholder="209000">
+        </div>
+      </div>
+      <div class="set-save-row">
+        <button class="btn-save" onclick="saveSettings('price')">저장</button>
+        <span class="save-msg hidden" id="setPriceMsg">저장되었습니다 ✓</span>
+      </div>
+    </div>
+
+    <!-- 히어로 문구 -->
+    <div class="settings-section">
+      <h3>✏️ 히어로 문구 편집</h3>
+      <div class="set-grid">
+        <div class="set-field-full">
+          <label class="set-label">소개 문구 (한국어)</label>
+          <textarea class="set-textarea" id="setSubKo" placeholder="리야드 출장·여행, 한식 조식과 한국말 통하는 호스트가 기다립니다"></textarea>
+        </div>
+        <div class="set-field-full">
+          <label class="set-label">소개 문구 (영어)</label>
+          <textarea class="set-textarea" id="setSubEn" placeholder="Korean host, home-style meals, and a warm welcome in the heart of Riyadh"></textarea>
+        </div>
+      </div>
+      <div class="set-save-row">
+        <button class="btn-save" onclick="saveSettings('hero')">저장</button>
+        <span class="save-msg hidden" id="setHeroMsg">저장되었습니다 ✓</span>
+      </div>
+    </div>
+
+    <!-- 갤러리 관리 -->
+    <div class="settings-section">
+      <h3>🖼️ 메인 갤러리 사진 (5장)</h3>
+      <p style="font-size:.8rem;color:var(--brown-light);margin-bottom:1rem">각 슬롯에 사진을 올리면 홈페이지 갤러리 스트립에 즉시 반영됩니다.</p>
+      <div class="gallery-admin-grid" id="galleryAdminGrid"></div>
+      <div style="height:.6rem"></div>
+      <div id="galSaveRow" style="display:flex;align-items:center;gap:.8rem;margin-top:.8rem">
+        <span class="save-msg hidden" id="galSaveMsg">저장되었습니다 ✓</span>
+        <span class="space-save-err hidden" id="galSaveErr"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 후기 관리 탭 -->
+  <div id="tabReviews" class="container hidden">
+
+    <!-- 새 후기 추가 폼 -->
+    <div class="review-add-box">
+      <h3>➕ 새 후기 추가</h3>
+      <div class="rev-fields">
+
+        <!-- 리뷰어 사진 -->
+        <div class="rev-field-full">
+          <label class="rev-label">리뷰어 사진 (선택)</label>
+          <div class="rev-photo-row">
+            <div class="rev-avatar-preview" id="addAvatarPreview">?</div>
+            <div class="rev-photo-btns">
+              <label class="btn-photo-upload" for="addPhotoInput">📷 사진 선택</label>
+              <button class="btn-photo-remove" id="addPhotoRemoveBtn" onclick="clearAddPhoto()">✕ 제거</button>
+            </div>
+            <input type="file" id="addPhotoInput" accept="image/*" style="display:none" onchange="onAddPhotoChange(this)">
+          </div>
+        </div>
+
+        <div>
+          <label class="rev-label">이름 *</label>
+          <input type="text" class="rev-input" id="addName" placeholder="홍길동">
+        </div>
+        <div>
+          <label class="rev-label">출처</label>
+          <select class="rev-select" id="addVia">
+            <option value="Google Maps">Google Maps</option>
+            <option value="KakaoTalk">KakaoTalk</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="직접 등록">직접 등록</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="rev-label">별점</label>
+          <div class="star-select" id="addStars">
+            <button class="star-btn on" data-v="1" onclick="setAddStar(1)">★</button>
+            <button class="star-btn on" data-v="2" onclick="setAddStar(2)">★</button>
+            <button class="star-btn on" data-v="3" onclick="setAddStar(3)">★</button>
+            <button class="star-btn on" data-v="4" onclick="setAddStar(4)">★</button>
+            <button class="star-btn on" data-v="5" onclick="setAddStar(5)">★</button>
+          </div>
+        </div>
+        <div>
+          <label class="rev-label">날짜 (표시용)</label>
+          <input type="text" class="rev-input" id="addDate" placeholder="2025년 3월">
+        </div>
+
+        <div class="rev-field-full">
+          <label class="rev-label">후기 내용 (한국어) *</label>
+          <textarea class="rev-textarea" id="addTextKo" placeholder="후기 내용을 입력하세요..."></textarea>
+        </div>
+        <div class="rev-field-full">
+          <label class="rev-label">후기 내용 (영어, 선택)</label>
+          <textarea class="rev-textarea" id="addTextEn" placeholder="English review text (optional)..."></textarea>
+        </div>
+
+        <div class="rev-field-full">
+          <label class="rev-label">후기 사진 (최대 10장, 선택)</label>
+          <div class="img-gallery" id="addReviewPhotosWrap"></div>
+          <input type="file" id="addReviewPhotosInput" accept="image/*" multiple style="display:none" onchange="onAddReviewPhotosChange(this)">
+        </div>
+      </div>
+      <div style="margin-top:1rem;display:flex;align-items:center;gap:.8rem">
+        <button class="btn-save" id="addRevBtn" onclick="addReview()">후기 등록</button>
+        <span class="save-msg hidden" id="addRevMsg">등록되었습니다 ✓</span>
+        <span class="space-save-err hidden" id="addRevErr"></span>
+      </div>
+    </div>
+
+    <!-- 등록된 후기 목록 -->
+    <div id="reviewsList"></div>
   </div>
 
   <!-- 공간 관리 탭 -->
@@ -216,11 +516,14 @@ function doLogin() {
 }
 
 /* ── 탭 전환 ── */
+const TAB_IDS = { inquiries:'tabInquiries', reservations:'tabReservations', reviews:'tabReviews', spaces:'tabSpaces', settings:'tabSettings' };
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i===0&&tab==='inquiries')||(i===1&&tab==='spaces')));
-  document.getElementById('tabInquiries').classList.toggle('hidden', tab !== 'inquiries');
-  document.getElementById('tabSpaces').classList.toggle('hidden', tab !== 'spaces');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  Object.entries(TAB_IDS).forEach(([k,id]) => document.getElementById(id).classList.toggle('hidden', k !== tab));
+  if (tab === 'reservations') fetchReservations();
   if (tab === 'spaces' && spacesData.length === 0) fetchSpaces();
+  if (tab === 'reviews') { fetchReviews(); renderAddReviewPhotos(); }
+  if (tab === 'settings') fetchSettings();
 }
 
 /* ════════════════════════════
@@ -358,43 +661,33 @@ async function fetchSpaces() {
   }
 }
 
+function getImgs(s) { return Array.isArray(s.imgs) ? s.imgs : (s.img ? [s.img] : []); }
+
 function renderSpaces() {
   const el = document.getElementById('spacesList');
-  el.innerHTML = spacesData.map((s, idx) => {
-    const hasImg = s.img && s.img.trim();
+  el.innerHTML = spacesData.map(s => {
+    const imgs = getImgs(s);
     return `
     <div class="space-edit-card" id="sec-${s.id}">
       <div class="sec-head" onclick="toggleSec('${s.id}')">
         <span class="sec-emoji">${s.emoji}</span>
         <div style="flex:1">
           <div class="sec-title">${esc(s.nKo)} <span style="font-weight:400;color:var(--brown-light)">/ ${esc(s.nEn)}</span></div>
-          <div class="sec-sub">${esc(s.bKo)} · ${s.id}</div>
+          <div class="sec-sub">${esc(s.bKo)} · ${s.id} · 사진 ${imgs.length}장</div>
         </div>
         <span class="chevron">▼</span>
       </div>
       <div class="sec-body">
-        <!-- 이미지 -->
-        <div class="img-row">
-          <div class="img-preview-wrap">
-            <div class="img-preview" id="preview-${s.id}">
-              ${hasImg
-                ? `<img src="${esc(s.img)}" alt="" onload="this.classList.add('loaded')" onerror="this.remove()">`
-                : `<span>${s.emoji}</span>`}
-            </div>
-            <div>
-              <label class="img-upload-btn" for="file-${s.id}">📷 사진 변경</label>
-              <input type="file" class="img-upload-input" id="file-${s.id}" accept="image/*" onchange="onFileChange('${s.id}', this)">
-              <div class="img-changed-badge" id="badge-${s.id}">사진 변경됨 (저장 전)</div>
-            </div>
-          </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.78rem;color:var(--brown-light);line-height:1.6">
-              권장 크기: 800×600px 이상<br>
-              지원 형식: JPG, PNG, WebP<br>
-              현재: <span id="imgurl-${s.id}" style="word-break:break-all">${hasImg ? esc(s.img) : '(없음)'}</span>
-            </div>
-          </div>
+        <!-- 사진 갤러리 -->
+        <div style="margin-bottom:.5rem;font-size:.78rem;font-weight:600;color:var(--brown-light)">사진 (수량 제한 없음 · JPG/PNG/WebP)</div>
+        <div class="img-gallery" id="gallery-${s.id}">
+          ${imgs.map((url, i) => imgThumbHtml(s.id, url, i)).join('')}
+          <label class="img-add-btn" for="file-${s.id}">
+            <span style="font-size:1.4rem">+</span>
+            <span>사진 추가</span>
+          </label>
         </div>
+        <input type="file" class="img-upload-input" id="file-${s.id}" accept="image/*" multiple onchange="onFilesChange('${s.id}', this)">
 
         <!-- 텍스트 필드 -->
         <div class="fields-grid">
@@ -434,50 +727,94 @@ function renderSpaces() {
   }).join('');
 }
 
+function imgThumbHtml(spaceId, url, idx) {
+  return `<div class="img-thumb-wrap" id="thumb-${spaceId}-${idx}">
+    <img src="${esc(url)}" onerror="this.src=''">
+    <button class="img-thumb-del" onclick="removeImg('${spaceId}',${idx})" title="삭제">✕</button>
+  </div>`;
+}
+
+function refreshGallery(spaceId) {
+  const s = spacesData.find(x => x.id === spaceId);
+  if (!s) return;
+  const imgs = getImgs(s);
+  const gallery = document.getElementById(`gallery-${spaceId}`);
+  const addBtn = gallery.querySelector('.img-add-btn').outerHTML;
+  gallery.innerHTML = imgs.map((url, i) => imgThumbHtml(spaceId, url, i)).join('') + addBtn;
+  // sec-sub 업데이트
+  document.querySelector(`#sec-${spaceId} .sec-sub`).textContent = `${esc(s.bKo)} · ${s.id} · 사진 ${imgs.length}장`;
+}
+
 function toggleSec(id) {
   document.getElementById(`sec-${id}`).classList.toggle('open');
 }
 
-function onFileChange(id, input) {
-  const file = input.files[0];
-  if (!file) return;
-  pendingImages[id] = file;
-  document.getElementById(`badge-${id}`).style.display = 'block';
-  const preview = document.getElementById(`preview-${id}`);
-  const reader = new FileReader();
-  reader.onload = e => {
-    preview.innerHTML = `<img src="${e.target.result}" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-  };
-  reader.readAsDataURL(file);
+function onFilesChange(id, input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  if (!pendingImages[id]) pendingImages[id] = [];
+  files.forEach(f => pendingImages[id].push(f));
+  // 미리보기를 로컬 ObjectURL로 갤러리에 추가
+  const s = spacesData.find(x => x.id === id);
+  if (!s.imgs) s.imgs = s.img ? [s.img] : [];
+  files.forEach(f => {
+    const url = URL.createObjectURL(f);
+    s.imgs.push('__pending__' + url); // 저장 전 임시 표시
+  });
+  refreshGallery(id);
+  input.value = '';
+}
+
+async function removeImg(spaceId, idx) {
+  const s = spacesData.find(x => x.id === spaceId);
+  if (!s) return;
+  const imgs = getImgs(s);
+  const url = imgs[idx];
+
+  if (url && !url.startsWith('__pending__') && url.startsWith('/images/spaces/')) {
+    const key = url.split('/').pop();
+    await fetch(`${API_BASE}/admin/spaces/${spaceId}/image/remove?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }),
+    }).catch(() => {});
+  }
+
+  s.imgs = imgs.filter((_, i) => i !== idx);
+  // pendingImages에서도 제거 (임시 URL 기준)
+  if (pendingImages[spaceId] && url && url.startsWith('__pending__')) {
+    const blobUrl = url.replace('__pending__', '');
+    pendingImages[spaceId] = pendingImages[spaceId].filter(f => URL.createObjectURL(f) !== blobUrl);
+  }
+  refreshGallery(spaceId);
+  await saveSpaceMeta(spaceId);
 }
 
 async function saveSpace(id) {
-  const btn  = document.getElementById(`sbtn-${id}`);
-  const msg  = document.getElementById(`smsg-${id}`);
-  const err  = document.getElementById(`serr-${id}`);
+  const btn = document.getElementById(`sbtn-${id}`);
+  const msg = document.getElementById(`smsg-${id}`);
+  const err = document.getElementById(`serr-${id}`);
   btn.disabled = true;
   msg.style.display = 'none';
   err.style.display = 'none';
 
   try {
-    // 이미지 먼저 업로드
-    if (pendingImages[id]) {
+    // 대기 중인 이미지 업로드
+    if (pendingImages[id] && pendingImages[id].length) {
       const fd = new FormData();
-      fd.append('file', pendingImages[id]);
+      pendingImages[id].forEach(f => fd.append('file', f));
       const r = await fetch(`${API_BASE}/admin/spaces/${id}/image?secret=${encodeURIComponent(adminSecret)}`, {
         method: 'POST', body: fd,
       });
       const d = await r.json();
       if (!d.ok) throw new Error(d.error || '이미지 업로드 실패');
-      // spacesData에 새 URL 반영
       const s = spacesData.find(x => x.id === id);
-      if (s) s.img = d.url;
-      document.getElementById(`imgurl-${id}`).textContent = d.url;
-      document.getElementById(`badge-${id}`).style.display = 'none';
+      // 임시 URL 제거 후 실제 URL로 교체
+      s.imgs = (s.imgs || []).filter(u => !u.startsWith('__pending__'));
+      d.urls.forEach(({ url }) => s.imgs.push(url));
       delete pendingImages[id];
+      refreshGallery(id);
     }
 
-    // 텍스트 메타 반영
+    // 텍스트 메타 반영 후 저장
     const s = spacesData.find(x => x.id === id);
     if (s) {
       s.nKo = document.getElementById(`nKo-${id}`).value.trim();
@@ -487,15 +824,7 @@ async function saveSpace(id) {
       s.dKo = document.getElementById(`dKo-${id}`).value.trim();
       s.dEn = document.getElementById(`dEn-${id}`).value.trim();
     }
-
-    // 전체 spaces 저장
-    const r2 = await fetch(`${API_BASE}/admin/spaces?secret=${encodeURIComponent(adminSecret)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ spaces: spacesData }),
-    });
-    const d2 = await r2.json();
-    if (!d2.ok) throw new Error(d2.error || '저장 실패');
+    await saveSpaceMeta(id);
 
     msg.style.display = 'inline';
     setTimeout(() => { msg.style.display = 'none'; }, 3000);
@@ -507,7 +836,487 @@ async function saveSpace(id) {
   }
 }
 
+async function saveSpaceMeta(id) {
+  const cleanSpaces = spacesData.map(s => ({
+    ...s,
+    imgs: (s.imgs || []).filter(u => !u.startsWith('__pending__')),
+    img: undefined,
+  }));
+  const r = await fetch(`${API_BASE}/admin/spaces?secret=${encodeURIComponent(adminSecret)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ spaces: cleanSpaces }),
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || '저장 실패');
+}
+
+/* ════════════════════════════
+   예약 현황
+════════════════════════════ */
+let reservations = [];
+
+async function fetchReservations() {
+  try {
+    const r = await fetch(`${API_BASE}/admin/reservations?secret=${encodeURIComponent(adminSecret)}`);
+    const d = await r.json();
+    if (d.ok) { reservations = d.reservations || []; renderReservations(); }
+    else document.getElementById('resList').innerHTML = '<div class="empty">데이터를 불러올 수 없습니다.</div>';
+  } catch {
+    document.getElementById('resList').innerHTML = '<div class="empty">서버 오류.</div>';
+  }
+}
+
+function renderReservations() {
+  const today = new Date().toISOString().slice(0,10);
+  const sorted = [...reservations].sort((a,b) => (b.checkin||'').localeCompare(a.checkin||''));
+  const upcoming = sorted.filter(r => r.checkin >= today);
+  const todayIn  = sorted.filter(r => r.checkin === today);
+  document.getElementById('resStatTotal').textContent    = sorted.length;
+  document.getElementById('resStatUpcoming').textContent = upcoming.length;
+  document.getElementById('resStatToday').textContent    = todayIn.length;
+
+  if (!sorted.length) {
+    document.getElementById('resList').innerHTML = '<div class="empty">📅 예약 내역이 없습니다.</div>';
+    return;
+  }
+
+  document.getElementById('resList').innerHTML = sorted.map((res, i) => {
+    let badge = '';
+    if (res.checkin === today)    badge = `<span class="badge-today">오늘 체크인</span>`;
+    else if (res.checkin > today) badge = `<span class="badge-upcoming">예정</span>`;
+    else                          badge = `<span class="badge-past">완료</span>`;
+
+    const nights = res.checkin && res.checkout
+      ? Math.round((new Date(res.checkout)-new Date(res.checkin))/(86400000))
+      : '-';
+    const wa = res.contact ? `https://wa.me/${res.contact.replace(/[^0-9]/g,'')}` : '#';
+    const tel = res.contact ? `tel:${res.contact.replace(/\s/g,'')}` : '#';
+
+    return `<div class="res-admin-card" id="resc-${i}">
+      <div class="res-admin-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <div class="res-dates">
+            ${esc(res.checkin||'-')} <span class="res-dates-arrow">→</span> ${esc(res.checkout||'-')}
+            ${nights!=='-'?`<span style="color:var(--brown-light);font-weight:400">(${nights}박)</span>`:''}
+          </div>
+          <div style="font-weight:600;font-size:.88rem">${esc(res.name)} <span style="font-weight:400;font-size:.8rem;color:var(--brown-light)">· ${esc(res.guests||'-')}명</span></div>
+          ${res.company?`<div style="font-size:.75rem;color:var(--brown-light)">${esc(res.company)}</div>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">${badge}<span class="chevron">▼</span></div>
+      </div>
+      <div class="res-admin-body">
+        <div class="info-grid">
+          <div class="info-row"><div class="info-label">연락처</div>${esc(res.contact||'-')}</div>
+          <div class="info-row"><div class="info-label">이메일</div>${esc(res.email||'-')}</div>
+          <div class="info-row"><div class="info-label">회사명</div>${esc(res.company||'-')}</div>
+          <div class="info-row"><div class="info-label">접수일시</div>${esc(res.date||'-')}</div>
+        </div>
+        ${res.message?`<div class="msg-box">${esc(res.message)}</div>`:''}
+        <div class="res-contact-row">
+          <a class="res-contact-btn res-wa" href="${wa}" target="_blank">📱 WhatsApp</a>
+          <a class="res-contact-btn res-ka" href="https://open.kakao.com/o/search#perfectjjong" target="_blank">💬 KakaoTalk</a>
+          ${res.contact?`<a class="res-contact-btn res-tel" href="${tel}">📞 전화</a>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════
+   사이트 설정 (가격 · 히어로 · 갤러리)
+════════════════════════════ */
+let siteConfig = {};
+let galleryData = [
+  {slot:'g1',url:'',key:''},{slot:'g2',url:'',key:''},
+  {slot:'g3',url:'',key:''},{slot:'g4',url:'',key:''},
+  {slot:'g5',url:'',key:''},
+];
+let pendingGallery = {}; // { slot: File }
+
+async function fetchSettings() {
+  try {
+    const [cfgRes, galRes] = await Promise.all([
+      fetch(`${API_BASE}/site-config`),
+      fetch(`${API_BASE}/gallery`),
+    ]);
+    const cfgData = await cfgRes.json();
+    const galData = await galRes.json();
+    if (cfgData.ok) {
+      siteConfig = cfgData.config || {};
+      document.getElementById('setPriceSar').value  = siteConfig.priceSar  || 575;
+      document.getElementById('setPriceKrw').value  = siteConfig.priceKrw  || 209000;
+      document.getElementById('setSubKo').value      = siteConfig.heroSubKo || '';
+      document.getElementById('setSubEn').value      = siteConfig.heroSubEn || '';
+    }
+    if (galData.ok && galData.gallery.length) {
+      galleryData = galData.gallery;
+    }
+    renderGalleryAdmin();
+  } catch {}
+}
+
+async function saveSettings(section) {
+  const msgId = section === 'price' ? 'setPriceMsg' : 'setHeroMsg';
+  const msg = document.getElementById(msgId);
+  try {
+    if (section === 'price') {
+      siteConfig.priceSar = parseInt(document.getElementById('setPriceSar').value) || 575;
+      siteConfig.priceKrw = parseInt(document.getElementById('setPriceKrw').value) || 209000;
+    } else {
+      siteConfig.heroSubKo = document.getElementById('setSubKo').value.trim();
+      siteConfig.heroSubEn = document.getElementById('setSubEn').value.trim();
+    }
+    const r = await fetch(`${API_BASE}/admin/site-config?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(siteConfig),
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 3000);
+  } catch(e) { alert('저장 실패: ' + e.message); }
+}
+
+/* ── 갤러리 어드민 ── */
+function renderGalleryAdmin() {
+  const el = document.getElementById('galleryAdminGrid');
+  el.innerHTML = galleryData.map((g, i) => {
+    const hasImg = g.url && !g.url.startsWith('__pending__');
+    const pendingUrl = g.url && g.url.startsWith('__pending__') ? g.url.replace('__pending__','') : '';
+    const showUrl = pendingUrl || (hasImg ? g.url : '');
+    return `<div class="gallery-slot" id="gslot-${g.slot}">
+      ${showUrl
+        ? `<img src="${esc(showUrl)}" onerror="this.style.display='none'">`
+        : `<div class="gallery-slot-empty"><span style="font-size:1.4rem">+</span><span>슬롯 ${i+1}</span></div>`}
+      <div class="gallery-slot-overlay">
+        <label class="gal-btn gal-btn-upload" for="galfile-${g.slot}">📷 변경</label>
+        ${showUrl ? `<button class="gal-btn gal-btn-remove" onclick="removeGallerySlot('${g.slot}')">삭제</button>` : ''}
+      </div>
+      <input type="file" id="galfile-${g.slot}" accept="image/*" style="display:none" onchange="onGalFileChange('${g.slot}',this)">
+    </div>`;
+  }).join('');
+}
+
+function onGalFileChange(slot, input) {
+  if (!input.files[0]) return;
+  pendingGallery[slot] = input.files[0];
+  const g = galleryData.find(x => x.slot === slot);
+  if (g) g.url = '__pending__' + URL.createObjectURL(input.files[0]);
+  renderGalleryAdmin();
+  uploadGallerySlot(slot);
+}
+
+async function uploadGallerySlot(slot) {
+  const file = pendingGallery[slot];
+  if (!file) return;
+  const msg = document.getElementById('galSaveMsg');
+  const err = document.getElementById('galSaveErr');
+  msg.classList.add('hidden'); err.classList.add('hidden');
+  try {
+    const fd = new FormData(); fd.append('file', file);
+    const r = await fetch(`${API_BASE}/admin/gallery/${slot}/image?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST', body: fd,
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    const g = galleryData.find(x => x.slot === slot);
+    // remove old image if any
+    if (g && g.key) {
+      await fetch(`${API_BASE}/admin/gallery/${slot}/image/remove?secret=${encodeURIComponent(adminSecret)}`, {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key: g.key }),
+      }).catch(()=>{});
+    }
+    if (g) { g.url = d.url; g.key = d.key; }
+    delete pendingGallery[slot];
+    await saveGalleryMeta();
+    renderGalleryAdmin();
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 3000);
+  } catch(e) {
+    err.textContent = '업로드 실패: ' + e.message;
+    err.classList.remove('hidden');
+    const g = galleryData.find(x => x.slot === slot);
+    if (g && g.url.startsWith('__pending__')) g.url = '';
+    renderGalleryAdmin();
+  }
+}
+
+async function removeGallerySlot(slot) {
+  if (!confirm('이 사진을 삭제하시겠습니까?')) return;
+  const g = galleryData.find(x => x.slot === slot);
+  if (!g) return;
+  if (g.key) {
+    await fetch(`${API_BASE}/admin/gallery/${slot}/image/remove?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key: g.key }),
+    }).catch(()=>{});
+  }
+  g.url = ''; g.key = '';
+  await saveGalleryMeta();
+  renderGalleryAdmin();
+}
+
+async function saveGalleryMeta() {
+  const r = await fetch(`${API_BASE}/admin/gallery?secret=${encodeURIComponent(adminSecret)}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ gallery: galleryData.map(g => ({ slot: g.slot, url: g.url.startsWith('__pending__') ? '' : g.url, key: g.key||'' })) }),
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+}
+
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ════════════════════════════
+   후기 관리
+════════════════════════════ */
+let reviewsData = [];
+let addStarVal = 5;
+let addPhotoFile = null;
+let addReviewPhotoFiles = [];
+
+/* ── 후기 사진 (추가 폼) ── */
+function renderAddReviewPhotos() {
+  const wrap = document.getElementById('addReviewPhotosWrap');
+  if (!wrap) return;
+  const thumbs = addReviewPhotoFiles.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return `<div class="img-thumb-wrap"><img src="${url}"><button class="img-thumb-del" onclick="removeAddReviewPhoto(${i})" title="삭제">✕</button></div>`;
+  }).join('');
+  const addBtn = addReviewPhotoFiles.length < 10
+    ? `<label class="img-add-btn" for="addReviewPhotosInput"><span style="font-size:1.4rem">+</span><span>사진 추가</span></label>`
+    : '';
+  wrap.innerHTML = thumbs + addBtn;
+}
+
+function onAddReviewPhotosChange(input) {
+  const files = Array.from(input.files);
+  const remaining = 10 - addReviewPhotoFiles.length;
+  files.slice(0, remaining).forEach(f => addReviewPhotoFiles.push(f));
+  renderAddReviewPhotos();
+  input.value = '';
+}
+
+function removeAddReviewPhoto(idx) {
+  addReviewPhotoFiles.splice(idx, 1);
+  renderAddReviewPhotos();
+}
+
+/* ── 후기 사진 (기존 후기 카드) ── */
+async function addReviewPhoto(reviewIdx, input) {
+  const file = input.files[0]; if (!file) return;
+  input.value = '';
+  const rv = reviewsData[reviewIdx]; if (!rv) return;
+  if ((rv.photos||[]).length >= 10) { alert('사진은 최대 10장까지 추가할 수 있습니다.'); return; }
+  try {
+    const fd = new FormData(); fd.append('file', file);
+    const r = await fetch(`${API_BASE}/admin/reviews/${rv.id}/image?secret=${encodeURIComponent(adminSecret)}`, {
+      method: 'POST', body: fd,
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    if (!rv.photos) rv.photos = [];
+    rv.photos.push({ key: d.key, url: d.url });
+    await saveReviewsMeta();
+    renderReviews();
+    setTimeout(() => { const c = document.getElementById(`rcard-${reviewIdx}`); if (c) c.classList.add('open'); }, 50);
+  } catch(e) { alert('사진 업로드 실패: ' + e.message); }
+}
+
+async function removeReviewPhoto(reviewIdx, key) {
+  if (!confirm('이 사진을 삭제하시겠습니까?')) return;
+  const rv = reviewsData[reviewIdx]; if (!rv) return;
+  await fetch(`${API_BASE}/admin/reviews/${rv.id}/image/remove?secret=${encodeURIComponent(adminSecret)}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key }),
+  }).catch(()=>{});
+  rv.photos = (rv.photos||[]).filter(p => p.key !== key);
+  await saveReviewsMeta();
+  renderReviews();
+  setTimeout(() => { const c = document.getElementById(`rcard-${reviewIdx}`); if (c) c.classList.add('open'); }, 50);
+}
+
+async function fetchReviews() {
+  try {
+    const r = await fetch(`${API_BASE}/reviews`);
+    const d = await r.json();
+    if (d.ok) { reviewsData = d.reviews || []; renderReviews(); }
+  } catch {
+    document.getElementById('reviewsList').innerHTML = '<div class="empty">후기 데이터를 불러올 수 없습니다.</div>';
+  }
+}
+
+function renderReviews() {
+  const el = document.getElementById('reviewsList');
+  if (!reviewsData.length) {
+    el.innerHTML = '<div class="empty">⭐ 등록된 후기가 없습니다. 위에서 추가하세요.</div>';
+    return;
+  }
+  const total = reviewsData.length;
+  el.innerHTML = reviewsData.map((rv, idx) => {
+    const stars = '★'.repeat(rv.rating||5) + '☆'.repeat(5-(rv.rating||5));
+    const initial = (rv.name||'?')[0].toUpperCase();
+    const avatarHtml = rv.photoUrl
+      ? `<div class="rev-card-avatar"><img src="${esc(rv.photoUrl)}" onerror="this.style.display='none'"></div>`
+      : `<div class="rev-card-avatar">${initial}</div>`;
+    return `
+    <div class="review-card-admin" id="rcard-${idx}">
+      <div class="rev-card-head" onclick="toggleRevCard(${idx})">
+        ${avatarHtml}
+        <div class="rev-card-info">
+          <div class="rev-card-name">${esc(rv.name)}</div>
+          <div class="rev-card-meta"><span class="rev-card-stars">${stars}</span> · ${esc(rv.via||'Google Maps')} · ${esc(rv.date||'')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.4rem" onclick="event.stopPropagation()">
+          <div class="rev-order-btns">
+            <button class="rev-order-btn" onclick="moveReview(${idx},-1)" ${idx===0?'disabled':''} title="위로">▲</button>
+            <button class="rev-order-btn" onclick="moveReview(${idx},1)" ${idx===total-1?'disabled':''} title="아래로">▼</button>
+          </div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="rev-card-body">
+        <div class="rev-body-text">${esc(rv.textKo||'')}</div>
+        ${rv.textEn?`<div class="rev-body-text" style="font-size:.82rem;color:var(--brown-light)">${esc(rv.textEn)}</div>`:''}
+        <div style="margin:.8rem 0 .3rem;font-size:.73rem;font-weight:600;color:var(--brown-light)">후기 사진 (${(rv.photos||[]).length}/10)</div>
+        <div class="img-gallery">
+          ${(rv.photos||[]).map(p => `<div class="img-thumb-wrap">
+            <img src="${esc(API_BASE + p.url)}" onerror="this.style.display='none'">
+            <button class="img-thumb-del" onclick="removeReviewPhoto(${idx},'${esc(p.key)}')" title="삭제">✕</button>
+          </div>`).join('')}
+          ${(rv.photos||[]).length < 10 ? `<label class="img-add-btn" for="revphoto-${idx}"><span style="font-size:1.4rem">+</span><span>추가</span></label>` : ''}
+        </div>
+        <input type="file" id="revphoto-${idx}" accept="image/*" style="display:none" onchange="addReviewPhoto(${idx},this)">
+        <div style="margin-top:.8rem">
+          <button class="rev-del-btn" onclick="deleteReview(${idx})">🗑️ 후기 삭제</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function moveReview(idx, dir) {
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= reviewsData.length) return;
+  [reviewsData[idx], reviewsData[newIdx]] = [reviewsData[newIdx], reviewsData[idx]];
+  await saveReviewsMeta();
+  renderReviews();
+}
+
+function toggleRevCard(idx) {
+  document.getElementById(`rcard-${idx}`).classList.toggle('open');
+}
+
+function setAddStar(v) {
+  addStarVal = v;
+  document.querySelectorAll('#addStars .star-btn').forEach(b => {
+    b.classList.toggle('on', parseInt(b.dataset.v) <= v);
+  });
+}
+
+function onAddPhotoChange(input) {
+  if (!input.files[0]) return;
+  addPhotoFile = input.files[0];
+  const url = URL.createObjectURL(addPhotoFile);
+  const prev = document.getElementById('addAvatarPreview');
+  prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  document.getElementById('addPhotoRemoveBtn').style.display = 'block';
+}
+
+function clearAddPhoto() {
+  addPhotoFile = null;
+  document.getElementById('addPhotoInput').value = '';
+  document.getElementById('addAvatarPreview').textContent = '?';
+  document.getElementById('addPhotoRemoveBtn').style.display = 'none';
+}
+
+async function addReview() {
+  const name = document.getElementById('addName').value.trim();
+  const textKo = document.getElementById('addTextKo').value.trim();
+  if (!name || !textKo) { alert('이름과 후기 내용(한국어)은 필수입니다.'); return; }
+
+  const btn = document.getElementById('addRevBtn');
+  const msg = document.getElementById('addRevMsg');
+  const err = document.getElementById('addRevErr');
+  btn.disabled = true; msg.classList.add('hidden'); err.classList.add('hidden');
+
+  try {
+    const id = 'rv_' + Date.now().toString(36);
+    let photoUrl = '';
+
+    // 리뷰어 사진 업로드
+    if (addPhotoFile) {
+      const fd = new FormData();
+      fd.append('file', addPhotoFile);
+      const r = await fetch(`${API_BASE}/admin/reviews/${id}/image?secret=${encodeURIComponent(adminSecret)}`, {
+        method: 'POST', body: fd,
+      });
+      const d = await r.json();
+      if (d.ok) photoUrl = d.url;
+    }
+
+    // 후기 사진 업로드 (최대 10장)
+    const photos = [];
+    for (const file of addReviewPhotoFiles) {
+      const fd = new FormData(); fd.append('file', file);
+      const r = await fetch(`${API_BASE}/admin/reviews/${id}/image?secret=${encodeURIComponent(adminSecret)}`, {
+        method: 'POST', body: fd,
+      });
+      const d = await r.json();
+      if (d.ok) photos.push({ key: d.key, url: d.url });
+    }
+
+    const newReview = {
+      id,
+      name,
+      via: document.getElementById('addVia').value,
+      rating: addStarVal,
+      date: document.getElementById('addDate').value.trim(),
+      textKo,
+      textEn: document.getElementById('addTextEn').value.trim(),
+      photoUrl,
+      photos,
+    };
+
+    reviewsData.push(newReview);
+    await saveReviewsMeta();
+
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 3000);
+
+    // 폼 초기화
+    document.getElementById('addName').value = '';
+    document.getElementById('addDate').value = '';
+    document.getElementById('addTextKo').value = '';
+    document.getElementById('addTextEn').value = '';
+    document.getElementById('addVia').value = 'Google Maps';
+    setAddStar(5);
+    clearAddPhoto();
+    addReviewPhotoFiles = [];
+    renderAddReviewPhotos();
+    renderReviews();
+  } catch (e) {
+    err.textContent = e.message || '오류가 발생했습니다.';
+    err.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function deleteReview(idx) {
+  if (!confirm('이 후기를 삭제하시겠습니까?')) return;
+  reviewsData.splice(idx, 1);
+  await saveReviewsMeta();
+  renderReviews();
+}
+
+async function saveReviewsMeta() {
+  const r = await fetch(`${API_BASE}/admin/reviews?secret=${encodeURIComponent(adminSecret)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reviews: reviewsData }),
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || '저장 실패');
+}
 </script>
 </body>
 </html>

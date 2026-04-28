@@ -57,13 +57,157 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors });
 
+    /* ── GET /site-config : 가격·히어로 문구 등 사이트 설정 ── */
+    if (url.pathname === '/site-config' && request.method === 'GET') {
+      const config = env.SPACES_KV ? await env.SPACES_KV.get('site_config', 'json') : null;
+      return json({ ok: true, config: config || {} }, 200, cors);
+    }
+
+    /* ── POST /admin/site-config : 사이트 설정 저장 ── */
+    if (url.pathname === '/admin/site-config' && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      let body; try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      await env.SPACES_KV.put('site_config', JSON.stringify(body));
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── GET /admin/reservations : 예약 목록 (어드민) ── */
+    if (url.pathname === '/admin/reservations' && request.method === 'GET') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      try {
+        const token = await getAccessToken(env);
+        const rows = await getRows(env, token, '예약');
+        const reservations = rows.slice(1).map((r, i) => ({
+          id: i+1, date: r[0]||'', name: r[1]||'', contact: r[2]||'',
+          email: r[3]||'', company: r[4]||'', checkin: r[5]||'', checkout: r[6]||'',
+          guests: r[7]||'', message: r[8]||'',
+        }));
+        return json({ ok: true, reservations }, 200, cors);
+      } catch(e) { return json({ ok: false, error: String(e?.message||e) }, 500, cors); }
+    }
+
+    /* ── GET /gallery : 갤러리 이미지 설정 ── */
+    if (url.pathname === '/gallery' && request.method === 'GET') {
+      const stored = env.SPACES_KV ? await env.SPACES_KV.get('gallery_config', 'json') : null;
+      return json({ ok: true, gallery: stored || [] }, 200, cors);
+    }
+
+    /* ── POST /admin/gallery : 갤러리 설정 저장 ── */
+    if (url.pathname === '/admin/gallery' && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      let body; try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      await env.SPACES_KV.put('gallery_config', JSON.stringify(body.gallery));
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── POST /admin/gallery/:slot/image : 갤러리 이미지 업로드 ── */
+    const galImgUploadMatch = url.pathname.match(/^\/admin\/gallery\/([^/]+)\/image$/);
+    if (galImgUploadMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const slot = galImgUploadMatch[1];
+      let formData; try { formData = await request.formData(); } catch { return json({ ok: false, error: 'invalid form data' }, 400, cors); }
+      const file = formData.get('file');
+      if (!file || !file.size) return json({ ok: false, error: 'no file' }, 400, cors);
+      const ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+      const ct  = IMG_TYPES[ext] || 'image/jpeg';
+      const uid = crypto.randomUUID().replace(/-/g,'').slice(0,12);
+      await env.SPACES_KV.put(`img:gallery:${slot}:${uid}`, await file.arrayBuffer(), { metadata: { contentType: ct } });
+      return json({ ok: true, url: `/images/gallery/${slot}/${uid}`, key: uid }, 200, cors);
+    }
+
+    /* ── POST /admin/gallery/:slot/image/remove : 갤러리 이미지 삭제 ── */
+    const galImgRemoveMatch = url.pathname.match(/^\/admin\/gallery\/([^/]+)\/image\/remove$/);
+    if (galImgRemoveMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const slot = galImgRemoveMatch[1];
+      let body; try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      await env.SPACES_KV.delete(`img:gallery:${slot}:${body.key}`);
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── GET /images/gallery/:slot/:key : 갤러리 이미지 서빙 ── */
+    const galImgServeMatch = url.pathname.match(/^\/images\/gallery\/([^/]+)\/([^/]+)$/);
+    if (galImgServeMatch && request.method === 'GET') {
+      if (!env.SPACES_KV) return new Response('Not configured', { status: 503 });
+      const [, slot, key] = galImgServeMatch;
+      const { value, metadata } = await env.SPACES_KV.getWithMetadata(`img:gallery:${slot}:${key}`, 'arrayBuffer');
+      if (!value) return new Response('Not Found', { status: 404 });
+      const ct = (metadata&&metadata.contentType)||'image/jpeg';
+      return new Response(value, { headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=86400', ...cors } });
+    }
+
+    /* ── GET /reviews : 공개 후기 목록 ── */
+    if (url.pathname === '/reviews' && request.method === 'GET') {
+      try {
+        const stored = env.SPACES_KV ? await env.SPACES_KV.get('reviews_config', 'json') : null;
+        return json({ ok: true, reviews: stored || [] }, 200, { ...cors, 'Cache-Control': 'no-store' });
+      } catch {
+        return json({ ok: true, reviews: [] }, 200, { ...cors, 'Cache-Control': 'no-store' });
+      }
+    }
+
+    /* ── POST /admin/reviews : 후기 배열 저장 ── */
+    if (url.pathname === '/admin/reviews' && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
+      let body;
+      try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      if (!Array.isArray(body.reviews)) return json({ ok: false, error: 'reviews array required' }, 400, cors);
+      await env.SPACES_KV.put('reviews_config', JSON.stringify(body.reviews));
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── POST /admin/reviews/:id/image : 리뷰어 사진 업로드 ── */
+    const revImgUploadMatch = url.pathname.match(/^\/admin\/reviews\/([^/]+)\/image$/);
+    if (revImgUploadMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      if (!env.SPACES_KV) return json({ ok: false, error: 'KV not configured' }, 500, cors);
+      const revId = revImgUploadMatch[1];
+      let formData;
+      try { formData = await request.formData(); } catch { return json({ ok: false, error: 'invalid form data' }, 400, cors); }
+      const file = formData.get('file');
+      if (!file || !file.size) return json({ ok: false, error: 'no file' }, 400, cors);
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const ct  = IMG_TYPES[ext] || 'image/jpeg';
+      const uid = crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+      await env.SPACES_KV.put(`img:review:${revId}:${uid}`, await file.arrayBuffer(), { metadata: { contentType: ct } });
+      return json({ ok: true, url: `/images/reviews/${revId}/${uid}`, key: uid }, 200, cors);
+    }
+
+    /* ── POST /admin/reviews/:id/image/remove : 리뷰어 사진 삭제 ── */
+    const revImgRemoveMatch = url.pathname.match(/^\/admin\/reviews\/([^/]+)\/image\/remove$/);
+    if (revImgRemoveMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const revId = revImgRemoveMatch[1];
+      let body; try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      await env.SPACES_KV.delete(`img:review:${revId}:${body.key}`);
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── GET /images/reviews/:revId/:key : 리뷰어 사진 서빙 ── */
+    const revImgServeMatch = url.pathname.match(/^\/images\/reviews\/([^/]+)\/([^/]+)$/);
+    if (revImgServeMatch && request.method === 'GET') {
+      if (!env.SPACES_KV) return new Response('Not configured', { status: 503 });
+      const [, revId, key] = revImgServeMatch;
+      const { value, metadata } = await env.SPACES_KV.getWithMetadata(`img:review:${revId}:${key}`, 'arrayBuffer');
+      if (!value) return new Response('Not Found', { status: 404 });
+      const ct = (metadata && metadata.contentType) || 'image/jpeg';
+      return new Response(value, {
+        headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=86400', ...cors },
+      });
+    }
+
     /* ── GET /spaces : 공간 설정 ── */
     if (url.pathname === '/spaces' && request.method === 'GET') {
       try {
         const stored = env.SPACES_KV ? await env.SPACES_KV.get('spaces_config', 'json') : null;
-        return json({ ok: true, spaces: stored || DEFAULT_SPACES }, 200, cors);
+        const spaces = (stored || DEFAULT_SPACES).map(s => {
+          if (!s.imgs) s.imgs = s.img ? [s.img] : [];
+          return s;
+        });
+        return json({ ok: true, spaces }, 200, cors);
       } catch {
-        return json({ ok: true, spaces: DEFAULT_SPACES }, 200, cors);
+        return json({ ok: true, spaces: DEFAULT_SPACES.map(s => ({ ...s, imgs: s.img ? [s.img] : [] })) }, 200, cors);
       }
     }
 
@@ -78,7 +222,7 @@ export default {
       return json({ ok: true }, 200, cors);
     }
 
-    /* ── POST /admin/spaces/:id/image : 이미지 업로드 (KV 저장) ── */
+    /* ── POST /admin/spaces/:id/image : 이미지 업로드 (KV, 복수 지원) ── */
     const imgUploadMatch = url.pathname.match(/^\/admin\/spaces\/([^/]+)\/image$/);
     if (imgUploadMatch && request.method === 'POST') {
       if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
@@ -86,23 +230,37 @@ export default {
       const spaceId = imgUploadMatch[1];
       let formData;
       try { formData = await request.formData(); } catch { return json({ ok: false, error: 'invalid form data' }, 400, cors); }
-      const file = formData.get('file');
-      if (!file || !file.size) return json({ ok: false, error: 'no file' }, 400, cors);
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-      const ct  = IMG_TYPES[ext] || 'image/jpeg';
-      const kvKey = `img:${spaceId}`;
-      const buf = await file.arrayBuffer();
-      // KV 메타에 content-type 저장, 값은 바이너리
-      await env.SPACES_KV.put(kvKey, buf, { metadata: { contentType: ct } });
-      return json({ ok: true, url: `/images/spaces/${spaceId}` }, 200, cors);
+      const files = formData.getAll('file');
+      if (!files.length) return json({ ok: false, error: 'no file' }, 400, cors);
+      const urls = [];
+      for (const file of files) {
+        if (!file.size) continue;
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const ct  = IMG_TYPES[ext] || 'image/jpeg';
+        const uid = crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+        const kvKey = `img:${spaceId}:${uid}`;
+        await env.SPACES_KV.put(kvKey, await file.arrayBuffer(), { metadata: { contentType: ct } });
+        urls.push({ url: `/images/spaces/${spaceId}/${uid}`, key: uid });
+      }
+      return json({ ok: true, urls }, 200, cors);
     }
 
-    /* ── GET /images/spaces/:id : KV 이미지 서빙 ── */
-    const imgServeMatch = url.pathname.match(/^\/images\/spaces\/([^/]+)$/);
+    /* ── POST /admin/spaces/:id/image/remove : 이미지 삭제 ── */
+    const imgRemoveMatch = url.pathname.match(/^\/admin\/spaces\/([^/]+)\/image\/remove$/);
+    if (imgRemoveMatch && request.method === 'POST') {
+      if (!isAdmin(url, env)) return json({ ok: false, error: 'unauthorized' }, 401, cors);
+      const spaceId = imgRemoveMatch[1];
+      let body; try { body = await request.json(); } catch { return json({ ok: false, error: 'invalid json' }, 400, cors); }
+      await env.SPACES_KV.delete(`img:${spaceId}:${body.key}`);
+      return json({ ok: true }, 200, cors);
+    }
+
+    /* ── GET /images/spaces/:spaceId/:key : KV 이미지 서빙 ── */
+    const imgServeMatch = url.pathname.match(/^\/images\/spaces\/([^/]+)\/([^/]+)$/);
     if (imgServeMatch && request.method === 'GET') {
       if (!env.SPACES_KV) return new Response('Not configured', { status: 503 });
-      const spaceId = imgServeMatch[1];
-      const { value, metadata } = await env.SPACES_KV.getWithMetadata(`img:${spaceId}`, 'arrayBuffer');
+      const [, spaceId, key] = imgServeMatch;
+      const { value, metadata } = await env.SPACES_KV.getWithMetadata(`img:${spaceId}:${key}`, 'arrayBuffer');
       if (!value) return new Response('Not Found', { status: 404 });
       const ct = (metadata && metadata.contentType) || 'image/jpeg';
       return new Response(value, {
