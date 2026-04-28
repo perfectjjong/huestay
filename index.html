@@ -1073,7 +1073,6 @@ function lbNav(dir) {
   lbIdx = (lbIdx + dir + lbImgs.length) % lbImgs.length;
   renderLbSlide();
 }
-}
 function closeLb(e) {
   if (e && !e.target.classList.contains('lb-ov') && !e.target.classList.contains('lb-close')) return;
   document.getElementById('lbOv').classList.remove('open');
