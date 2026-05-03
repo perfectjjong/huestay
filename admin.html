@@ -911,11 +911,20 @@ function renderReservations() {
     return;
   }
 
+  const PKG_COLORS = {
+    '숙박 패키지': '#6B8FAE', '식사 패키지': '#C4714A',
+    '디너 패키지': '#8B5E3C', '기업제휴': '#5A7A5A', '일반 예약': '#9A8C82'
+  };
+
   document.getElementById('resList').innerHTML = sorted.map((res, i) => {
     let badge = '';
     if (res.checkin === today)    badge = `<span class="badge-today">오늘 체크인</span>`;
     else if (res.checkin > today) badge = `<span class="badge-upcoming">예정</span>`;
     else                          badge = `<span class="badge-past">완료</span>`;
+
+    const pkgType = res.package_type || '일반 예약';
+    const pkgColor = PKG_COLORS[pkgType] || '#9A8C82';
+    const pkgBadge = `<span style="background:${pkgColor};color:#fff;font-size:.62rem;font-weight:700;padding:.15rem .55rem;border-radius:12px;letter-spacing:.3px">${pkgType}</span>`;
 
     const nights = res.checkin && res.checkout
       ? Math.round((new Date(res.checkout)-new Date(res.checkin))/(86400000))
@@ -926,7 +935,8 @@ function renderReservations() {
     return `<div class="res-admin-card" id="resc-${i}">
       <div class="res-admin-head" onclick="this.parentElement.classList.toggle('open')">
         <div>
-          <div class="res-dates">
+          <div class="res-dates" style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap">
+            ${pkgBadge}
             ${esc(res.checkin||'-')} <span class="res-dates-arrow">→</span> ${esc(res.checkout||'-')}
             ${nights!=='-'?`<span style="color:var(--brown-light);font-weight:400">(${nights}박)</span>`:''}
           </div>
@@ -937,6 +947,7 @@ function renderReservations() {
       </div>
       <div class="res-admin-body">
         <div class="info-grid">
+          <div class="info-row"><div class="info-label">문의유형</div>${pkgBadge}</div>
           <div class="info-row"><div class="info-label">연락처</div>${esc(res.contact||'-')}</div>
           <div class="info-row"><div class="info-label">이메일</div>${esc(res.email||'-')}</div>
           <div class="info-row"><div class="info-label">회사명</div>${esc(res.company||'-')}</div>
@@ -945,7 +956,7 @@ function renderReservations() {
         ${res.message?`<div class="msg-box">${esc(res.message)}</div>`:''}
         <div class="res-contact-row">
           <a class="res-contact-btn res-wa" href="${wa}" target="_blank">📱 WhatsApp</a>
-          <a class="res-contact-btn res-ka" href="https://open.kakao.com/o/search#perfectjjong" target="_blank">💬 KakaoTalk</a>
+          <a class="res-contact-btn res-ka" href="https://open.kakao.com/o/search#roykiss" target="_blank">💬 KakaoTalk</a>
           ${res.contact?`<a class="res-contact-btn res-tel" href="${tel}">📞 전화</a>`:''}
         </div>
       </div>

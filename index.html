@@ -864,7 +864,7 @@
           <li data-ko="세탁 & 청소 서비스" data-en="Laundry & cleaning service">세탁 & 청소 서비스</li>
           <li data-ko="렌트카 · 유심 연결 지원" data-en="Car rental & SIM card support">렌트카 · 유심 연결 지원</li>
         </ul>
-        <a href="#reservation" class="pkg-cta" data-ko="숙박 문의하기" data-en="Inquire Now">숙박 문의하기</a>
+        <button class="pkg-cta" onclick="selectPkg('숙박 패키지')" data-ko="숙박 문의하기" data-en="Inquire Now">숙박 문의하기</button>
       </div>
       <div class="pkg-card featured">
         <span class="pkg-popular" data-ko="인기" data-en="Popular">인기</span>
@@ -877,7 +877,7 @@
           <li data-ko="필요시 점심 별도 제공" data-en="Lunch available on request">필요시 점심 별도 제공</li>
           <li data-ko="도시락 서비스 가능" data-en="Lunchbox service available">도시락 서비스 가능</li>
         </ul>
-        <a href="#reservation" class="pkg-cta" data-ko="식사 패키지 문의" data-en="Inquire Now">식사 패키지 문의</a>
+        <button class="pkg-cta" onclick="selectPkg('식사 패키지')" data-ko="식사 패키지 문의" data-en="Inquire Now">식사 패키지 문의</button>
       </div>
       <div class="pkg-card">
         <div class="pkg-icon">🥩</div>
@@ -889,7 +889,7 @@
           <li data-ko="프라이빗 파티룸" data-en="Private party room">프라이빗 파티룸</li>
           <li data-ko="소그룹 모임 · 팀 회식 가능" data-en="Small group & team dinner">소그룹 모임 · 팀 회식 가능</li>
         </ul>
-        <a href="#reservation" class="pkg-cta" data-ko="디너 예약 문의" data-en="Inquire Now">디너 예약 문의</a>
+        <button class="pkg-cta" onclick="selectPkg('디너 패키지')" data-ko="디너 예약 문의" data-en="Inquire Now">디너 예약 문의</button>
       </div>
     </div>
   </div>
@@ -1000,6 +1000,16 @@
           <div class="fg"><label data-ko="체크아웃" data-en="Check-out">체크아웃</label><input type="date" name="checkout" required></div>
         </div>
         <div class="fg">
+          <label data-ko="문의 유형" data-en="Inquiry Type">문의 유형</label>
+          <select name="package_type" id="pkgTypeSelect">
+            <option value="일반 예약"  data-ko="일반 예약"    data-en="General Reservation">일반 예약</option>
+            <option value="숙박 패키지" data-ko="숙박 패키지"  data-en="Stay Package">숙박 패키지</option>
+            <option value="식사 패키지" data-ko="식사 패키지"  data-en="Meal Package">식사 패키지</option>
+            <option value="디너 패키지" data-ko="디너 패키지"  data-en="Dinner Package">디너 패키지</option>
+            <option value="기업제휴"   data-ko="기업제휴 문의" data-en="Corporate Inquiry">기업제휴 문의</option>
+          </select>
+        </div>
+        <div class="fg">
           <label data-ko="인원" data-en="Guests">인원</label>
           <select name="guests">
             <option>1명</option><option>2명</option><option>3명</option><option>4명</option><option>5명 이상</option>
@@ -1020,9 +1030,9 @@
       <p style="color:#3D2B1F;font-family:'Playfair Display',serif;font-size:1.28rem;margin-bottom:.4rem;" data-ko="기업 단위 계약으로 더 유리한 조건을" data-en="Better rates for corporate bookings">기업 단위 계약으로 더 유리한 조건을</p>
       <p style="color:#8C6B57;font-size:.85rem;line-height:1.65;" data-ko="건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다." data-en="Tailored proposals for construction, manufacturing, and frequent business travelers.">건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다.</p>
     </div>
-    <a href="https://open.kakao.com/o/search#roykiss" target="_blank"
-       style="display:inline-block;padding:.85rem 2rem;background:#C4714A;color:#fff;border-radius:50px;font-size:.86rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;"
-       data-ko="기업제휴 문의하기" data-en="Corporate Inquiry">기업제휴 문의하기</a>
+    <button onclick="selectPkg('기업제휴')"
+       style="padding:.85rem 2rem;background:#C4714A;color:#fff;border-radius:50px;font-size:.86rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;"
+       data-ko="기업제휴 문의하기" data-en="Corporate Inquiry">기업제휴 문의하기</button>
   </div>
 </div>
 
@@ -1298,11 +1308,23 @@ function closeLb(e) {
 const API_BASE   = 'https://huestay-api.perfectjjong.workers.dev';
 const SUBMIT_URL = API_BASE + '/submit';
 
+function selectPkg(pkgType) {
+  const sel = document.getElementById('pkgTypeSelect');
+  if (sel) {
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === pkgType) { sel.selectedIndex = i; break; }
+    }
+  }
+  document.getElementById('reservation').scrollIntoView({ behavior: 'smooth' });
+}
+
 function submitRes(e) {
   e.preventDefault();
   const f = e.target;
+  const pkgType = f.package_type ? f.package_type.value : '일반 예약';
   const data = {
     type:'reservation',
+    package_type: pkgType,
     name:f.name.value, contact:f.contact.value,
     email:f.email.value, company:f.company.value,
     checkin:f.checkin.value, checkout:f.checkout.value,
@@ -1310,7 +1332,7 @@ function submitRes(e) {
   };
   fetch(SUBMIT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }).catch(()=>{});
   const msg = encodeURIComponent(
-    `[Hue Stay 예약]\n이름: ${data.name}\n연락처: ${data.contact}\n이메일: ${data.email||'-'}\n회사명: ${data.company||'-'}\n체크인: ${data.checkin}\n체크아웃: ${data.checkout}\n인원: ${data.guests}\n문의: ${data.message}`
+    `[Hue Stay 예약 — ${pkgType}]\n이름: ${data.name}\n연락처: ${data.contact}\n이메일: ${data.email||'-'}\n회사명: ${data.company||'-'}\n체크인: ${data.checkin}\n체크아웃: ${data.checkout}\n인원: ${data.guests}\n문의: ${data.message}`
   );
   window.open(`https://wa.me/966569814239?text=${msg}`, '_blank');
   f.reset();

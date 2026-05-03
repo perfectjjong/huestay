@@ -30,8 +30,8 @@ const DEFAULT_SPACES = [
 const TABS = {
   reservation: {
     name: '예약',
-    headers: ['접수일시','이름','연락처','이메일','회사명','체크인','체크아웃','인원','메시지'],
-    pick: (b) => [b.name||'', b.contact||'', b.email||'', b.company||'',
+    headers: ['접수일시','패키지유형','이름','연락처','이메일','회사명','체크인','체크아웃','인원','메시지'],
+    pick: (b) => [b.package_type||'일반 예약', b.name||'', b.contact||'', b.email||'', b.company||'',
                   b.checkin||'', b.checkout||'', b.guests||'', b.message||''],
   },
   inquiry: {
@@ -42,8 +42,8 @@ const TABS = {
   },
   other: {
     name: '기타',
-    headers: ['접수일시','유형','이름','연락처','이메일','회사명','체크인','체크아웃','인원','제목','내용'],
-    pick: (b) => [b.type||'', b.name||'', b.contact||'', b.email||'', b.company||'',
+    headers: ['접수일시','유형','패키지유형','이름','연락처','이메일','회사명','체크인','체크아웃','인원','제목','내용'],
+    pick: (b) => [b.type||'', b.package_type||'', b.name||'', b.contact||'', b.email||'', b.company||'',
                   b.checkin||'', b.checkout||'', b.guests||'', b.subject||'', b.message||''],
   },
 };
