@@ -665,6 +665,50 @@
       .spaces-grid { grid-template-columns: 1fr; }
     }
 
+    /* ── PACKAGE MODAL ── */
+    .pm-ov {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(61,43,31,.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1.2rem;
+    }
+    .pm-ov.open { display: flex; }
+    .pm-box {
+      background: #fff; border-radius: 20px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 24px 64px rgba(61,43,31,.22);
+      overflow: hidden; position: relative;
+    }
+    .pm-head {
+      background: #C4714A; padding: 1.4rem 1.6rem 1.2rem;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .pm-head-icon { font-size: 1.8rem; margin-bottom: .3rem; }
+    .pm-head-label { font-size: .68rem; color: rgba(255,255,255,.75); letter-spacing: 2px; text-transform: uppercase; margin-bottom: .15rem; }
+    .pm-head-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #fff; }
+    .pm-close {
+      background: rgba(255,255,255,.2); border: none; color: #fff;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      font-size: .9rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .pm-body { padding: 1.6rem; }
+    .pm-fg { margin-bottom: 1rem; }
+    .pm-fg label { display: block; font-size: .76rem; font-weight: 700; color: #3D2B1F; margin-bottom: .3rem; }
+    .pm-fg input, .pm-fg textarea {
+      width: 100%; padding: .68rem .9rem;
+      border: 1.5px solid #EDE0D0; border-radius: 9px;
+      font-size: .87rem; color: #3D2B1F; background: #FDFAF5;
+      outline: none; font-family: inherit; transition: border-color .2s;
+    }
+    .pm-fg input:focus, .pm-fg textarea:focus { border-color: #C4714A; }
+    .pm-fg textarea { resize: vertical; min-height: 76px; }
+    .pm-submit {
+      width: 100%; padding: .92rem; background: #C4714A; color: #fff;
+      border: none; border-radius: 11px; font-size: .92rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .pm-submit:hover { background: #A85B38; }
+    .pm-note { font-size: .76rem; color: #8C6B57; text-align: center; margin-top: .8rem; line-height: 1.5; }
+
     /* ── SERVICE STRIP ── */
     #service-strip { background: #F2EDE6; border-top: 1px solid #E8DDD4; border-bottom: 1px solid #E8DDD4; padding: 1.4rem 0; }
     .svc-row { display: flex; justify-content: center; flex-wrap: wrap; }
@@ -864,7 +908,7 @@
           <li data-ko="세탁 & 청소 서비스" data-en="Laundry & cleaning service">세탁 & 청소 서비스</li>
           <li data-ko="렌트카 · 유심 연결 지원" data-en="Car rental & SIM card support">렌트카 · 유심 연결 지원</li>
         </ul>
-        <button class="pkg-cta" onclick="selectPkg('숙박 패키지')" data-ko="숙박 문의하기" data-en="Inquire Now">숙박 문의하기</button>
+        <button class="pkg-cta" onclick="openPm('숙박 패키지','🏠','휴스테이 숙박')" data-ko="숙박 문의하기" data-en="Inquire Now">숙박 문의하기</button>
       </div>
       <div class="pkg-card featured">
         <span class="pkg-popular" data-ko="인기" data-en="Popular">인기</span>
@@ -877,7 +921,7 @@
           <li data-ko="필요시 점심 별도 제공" data-en="Lunch available on request">필요시 점심 별도 제공</li>
           <li data-ko="도시락 서비스 가능" data-en="Lunchbox service available">도시락 서비스 가능</li>
         </ul>
-        <button class="pkg-cta" onclick="selectPkg('식사 패키지')" data-ko="식사 패키지 문의" data-en="Inquire Now">식사 패키지 문의</button>
+        <button class="pkg-cta" onclick="openPm('식사 패키지','🍱','휴스테이 식사')" data-ko="식사 패키지 문의" data-en="Inquire Now">식사 패키지 문의</button>
       </div>
       <div class="pkg-card">
         <div class="pkg-icon">🥩</div>
@@ -889,7 +933,7 @@
           <li data-ko="프라이빗 파티룸" data-en="Private party room">프라이빗 파티룸</li>
           <li data-ko="소그룹 모임 · 팀 회식 가능" data-en="Small group & team dinner">소그룹 모임 · 팀 회식 가능</li>
         </ul>
-        <button class="pkg-cta" onclick="selectPkg('디너 패키지')" data-ko="디너 예약 문의" data-en="Inquire Now">디너 예약 문의</button>
+        <button class="pkg-cta" onclick="openPm('디너 패키지','🥩','휴스테이 디너')" data-ko="디너 예약 문의" data-en="Inquire Now">디너 예약 문의</button>
       </div>
     </div>
   </div>
@@ -1030,7 +1074,7 @@
       <p style="color:#3D2B1F;font-family:'Playfair Display',serif;font-size:1.28rem;margin-bottom:.4rem;" data-ko="기업 단위 계약으로 더 유리한 조건을" data-en="Better rates for corporate bookings">기업 단위 계약으로 더 유리한 조건을</p>
       <p style="color:#8C6B57;font-size:.85rem;line-height:1.65;" data-ko="건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다." data-en="Tailored proposals for construction, manufacturing, and frequent business travelers.">건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다.</p>
     </div>
-    <button onclick="selectPkg('기업제휴')"
+    <button onclick="openPm('기업제휴','🤝','기업 협약 문의')"
        style="padding:.85rem 2rem;background:#C4714A;color:#fff;border-radius:50px;font-size:.86rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;"
        data-ko="기업제휴 문의하기" data-en="Corporate Inquiry">기업제휴 문의하기</button>
   </div>
@@ -1121,6 +1165,36 @@
     <div class="foot-copy">© 2025 Hue Stay · perfectjjong@gmail.com</div>
   </div>
 </footer>
+
+<!-- PACKAGE MODAL -->
+<div class="pm-ov" id="pmOv" onclick="if(event.target===this)closePm()">
+  <div class="pm-box">
+    <div class="pm-head">
+      <div>
+        <div class="pm-head-icon" id="pmIcon">🏠</div>
+        <div class="pm-head-label" data-ko="문의 접수" data-en="Inquiry">문의 접수</div>
+        <div class="pm-head-title" id="pmTitle">휴스테이 숙박</div>
+      </div>
+      <button class="pm-close" onclick="closePm()">✕</button>
+    </div>
+    <div class="pm-body">
+      <form onsubmit="submitPm(event)">
+        <input type="hidden" id="pmPkgType" value="">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+          <div class="pm-fg"><label data-ko="이름 *" data-en="Name *">이름 *</label><input type="text" id="pmName" required data-ko="홍길동" data-en="Your name" placeholder="홍길동"></div>
+          <div class="pm-fg"><label data-ko="연락처 *" data-en="Contact *">연락처 *</label><input type="text" id="pmContact" required data-ko="+82-10-XXXX-XXXX" data-en="+966-XX-XXXX-XXXX" placeholder="+82-10-XXXX-XXXX"></div>
+        </div>
+        <div class="pm-fg" id="pmCompanyWrap" style="display:none">
+          <label data-ko="회사명 *" data-en="Company *">회사명 *</label>
+          <input type="text" id="pmCompany" data-ko="법인명 또는 부서명" data-en="Company name" placeholder="법인명 또는 부서명">
+        </div>
+        <div class="pm-fg"><label data-ko="메모 (선택)" data-en="Message (optional)">메모 (선택)</label><textarea id="pmMsg" data-ko="날짜·인원·요청사항 등 자유롭게 적어주세요" data-en="Dates, guests, requests..." placeholder="날짜·인원·요청사항 등 자유롭게 적어주세요"></textarea></div>
+        <button type="submit" class="pm-submit" data-ko="문의 접수하기" data-en="Submit Inquiry">문의 접수하기</button>
+      </form>
+      <p class="pm-note" data-ko="접수 후 카카오톡·왓츠앱으로 빠르게 답변드립니다." data-en="We'll reply via KakaoTalk or WhatsApp shortly.">접수 후 카카오톡·왓츠앱으로 빠르게 답변드립니다.</p>
+    </div>
+  </div>
+</div>
 
 <!-- FLOATS -->
 <div class="floats">
@@ -1308,14 +1382,39 @@ function closeLb(e) {
 const API_BASE   = 'https://huestay-api.perfectjjong.workers.dev';
 const SUBMIT_URL = API_BASE + '/submit';
 
-function selectPkg(pkgType) {
-  const sel = document.getElementById('pkgTypeSelect');
-  if (sel) {
-    for (let i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value === pkgType) { sel.selectedIndex = i; break; }
-    }
-  }
-  document.getElementById('reservation').scrollIntoView({ behavior: 'smooth' });
+function openPm(pkgType, icon, title) {
+  document.getElementById('pmPkgType').value = pkgType;
+  document.getElementById('pmIcon').textContent = icon;
+  document.getElementById('pmTitle').textContent = title;
+  const isCorperate = pkgType === '기업제휴';
+  document.getElementById('pmCompanyWrap').style.display = isCorperate ? 'block' : 'none';
+  document.getElementById('pmCompany').required = isCorperate;
+  document.getElementById('pmName').value = '';
+  document.getElementById('pmContact').value = '';
+  document.getElementById('pmCompany').value = '';
+  document.getElementById('pmMsg').value = '';
+  document.getElementById('pmOv').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePm() {
+  document.getElementById('pmOv').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function submitPm(e) {
+  e.preventDefault();
+  const pkgType  = document.getElementById('pmPkgType').value;
+  const name     = document.getElementById('pmName').value;
+  const contact  = document.getElementById('pmContact').value;
+  const company  = document.getElementById('pmCompany').value;
+  const msg      = document.getElementById('pmMsg').value;
+  const data = { type:'reservation', package_type:pkgType, name, contact, company, message:msg };
+  fetch(SUBMIT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }).catch(()=>{});
+  const waMsg = encodeURIComponent(
+    `[휴스테이 — ${pkgType}]\n이름: ${name}\n연락처: ${contact}${company?'\n회사명: '+company:''}\n메모: ${msg||'-'}`
+  );
+  window.open(`https://wa.me/966569814239?text=${waMsg}`, '_blank');
+  closePm();
+  showToast(lang==='ko'?`${pkgType} 문의가 접수되었습니다 ✅`:`${pkgType} inquiry submitted ✅`);
 }
 
 function submitRes(e) {
