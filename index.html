@@ -67,7 +67,7 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Noto Sans KR', sans-serif;
-      background: var(--cream);
+      background: #ffffff;
       color: var(--brown);
       line-height: 1.7;
       overflow-x: hidden;
@@ -132,9 +132,15 @@
     }
     /* Local hero image — will show if file exists */
     #hero { background-image:
-      linear-gradient(160deg, rgba(61,43,31,.5) 0%, rgba(196,113,74,.38) 45%, rgba(61,43,31,.65) 100%),
+      linear-gradient(160deg, rgba(61,43,31,.36) 0%, rgba(196,113,74,.20) 45%, rgba(61,43,31,.48) 100%),
       url('images/hero.jpg');
       background-size: cover; background-position: center;
+    }
+    .hero-target-badge {
+      display: inline-block; margin-bottom: .9rem;
+      background: #E8C896; color: #3D2B1F;
+      font-size: .72rem; font-weight: 700; letter-spacing: 2px;
+      padding: .32rem 1.1rem; border-radius: 20px;
     }
     .hero-inner { position: relative; z-index: 2; color: #fff; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; }
     .hero-eyebrow {
@@ -212,7 +218,7 @@
     .feat { background: var(--sand); color: var(--brown); padding: .3rem .9rem; border-radius: 20px; font-size: .8rem; font-weight: 500; }
 
     /* ── SPACES ── */
-    #spaces { background: var(--cream); }
+    #spaces { background: #F8F4EF; }
     .filter-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
     .filter-btn {
       padding: .4rem 1.1rem; border: 1.5px solid var(--gold);
@@ -333,7 +339,7 @@
     .g5 { background: linear-gradient(135deg, #8FA0B5, #4A6080); }
 
     /* ── RESERVATION ── */
-    #reservation { background: var(--sand); }
+    #reservation { background: #F8F4EF; }
     .res-subtitle { text-align:center; color:var(--brown-light); font-size:.9rem; margin-bottom:2.4rem; }
     .res-note { text-align:center; color:var(--brown-light); font-size:.82rem; margin-top:1.4rem; }
     .res-btns { display:flex; flex-direction:column; gap:1rem; max-width:460px; margin:0 auto; }
@@ -658,6 +664,42 @@
     @media (max-width: 360px) {
       .spaces-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── SERVICE STRIP ── */
+    #service-strip { background: #F2EDE6; border-top: 1px solid #E8DDD4; border-bottom: 1px solid #E8DDD4; padding: 1.4rem 0; }
+    .svc-row { display: flex; justify-content: center; flex-wrap: wrap; }
+    .svc-item { display: flex; align-items: center; gap: .65rem; padding: .65rem 1.8rem; border-right: 1px solid rgba(196,113,74,.18); }
+    .svc-item:last-child { border-right: none; }
+    .svc-item .svc-icon { font-size: 1.45rem; flex-shrink: 0; }
+    .svc-item .svc-text { font-size: .82rem; font-weight: 600; color: var(--brown); line-height: 1.35; }
+    @media (max-width: 640px) {
+      .svc-item { flex: 0 0 50%; border-right: none; flex-direction: column; gap: .28rem; padding: .85rem .5rem; text-align: center; }
+    }
+
+    /* ── PACKAGES ── */
+    #packages { background: #ffffff; }
+    .pkg-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.4rem; margin-top: 2.8rem; }
+    .pkg-card {
+      background: #fff; border: 1.5px solid #EDE0D0; border-top: 3px solid #E8C896;
+      border-radius: 16px; padding: 2rem 1.6rem;
+      display: flex; flex-direction: column; position: relative;
+      box-shadow: 0 2px 14px rgba(61,43,31,.07);
+      transition: transform .28s, box-shadow .28s;
+    }
+    .pkg-card:hover { transform: translateY(-5px); box-shadow: 0 10px 36px rgba(61,43,31,.13); }
+    .pkg-card.featured { background: #FBF5EC; border-top-color: #C4714A; }
+    .pkg-popular { position: absolute; top: 1.2rem; right: 1.2rem; background: #C4714A; color: #fff; font-size: .63rem; font-weight: 700; padding: .2rem .65rem; border-radius: 20px; }
+    .pkg-icon { font-size: 2.1rem; margin-bottom: .85rem; }
+    .pkg-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: .22rem; color: #3D2B1F; }
+    .pkg-sub { font-size: .72rem; color: #8C6B57; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.2rem; }
+    .pkg-list { list-style: none; flex: 1; display: flex; flex-direction: column; gap: .42rem; margin-bottom: 1.7rem; }
+    .pkg-list li { display: flex; align-items: flex-start; gap: .5rem; font-size: .85rem; color: #3D2B1F; line-height: 1.5; }
+    .pkg-list li::before { content: '✓'; color: #C4714A; font-weight: 700; flex-shrink: 0; margin-top: .06rem; }
+    .pkg-cta { display: block; text-align: center; padding: .75rem 1.2rem; border-radius: 50px; font-size: .83rem; font-weight: 700; text-decoration: none; transition: all .22s; border: 2px solid #C4714A; color: #C4714A; }
+    .pkg-cta:hover { background: #C4714A; color: #fff; }
+    .pkg-card.featured .pkg-cta { background: #C4714A; color: #fff; border-color: #C4714A; }
+    .pkg-card.featured .pkg-cta:hover { background: #A85B38; border-color: #A85B38; }
+    @media (max-width: 860px) { .pkg-grid { grid-template-columns: 1fr; max-width: 420px; margin-inline: auto; } }
   </style>
 </head>
 <body>
@@ -666,12 +708,13 @@
 <nav id="nav">
   <a href="#" class="nav-logo"><img src="images/logo.jpg" alt="Hue Stay"></a>
   <ul class="nav-links">
-    <li><a href="#about"       data-ko="소개"  data-en="About">소개</a></li>
-    <li><a href="#spaces"      data-ko="공간"  data-en="Spaces">공간</a></li>
-    <li><a href="#reviews"     data-ko="후기"  data-en="Reviews">후기</a></li>
-    <li><a href="#reservation" data-ko="예약"  data-en="Reserve">예약</a></li>
-    <li><a href="#inquiry"     data-ko="문의"  data-en="Inquiry">문의</a></li>
-    <li><a href="#location"    data-ko="위치"  data-en="Location">위치</a></li>
+    <li><a href="#about"       data-ko="소개"   data-en="About">소개</a></li>
+    <li><a href="#spaces"      data-ko="공간"   data-en="Spaces">공간</a></li>
+    <li><a href="#packages"    data-ko="패키지" data-en="Packages">패키지</a></li>
+    <li><a href="#reviews"     data-ko="후기"   data-en="Reviews">후기</a></li>
+    <li><a href="#reservation" data-ko="예약"   data-en="Reserve">예약</a></li>
+    <li><a href="#inquiry"     data-ko="문의"   data-en="Inquiry">문의</a></li>
+    <li><a href="#location"    data-ko="위치"   data-en="Location">위치</a></li>
   </ul>
   <div class="nav-right">
     <div class="lang-toggle">
@@ -682,12 +725,13 @@
   </div>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#about"       onclick="closeMobile()" data-ko="소개"  data-en="About">소개</a>
-  <a href="#spaces"      onclick="closeMobile()" data-ko="공간"  data-en="Spaces">공간</a>
-  <a href="#reviews"     onclick="closeMobile()" data-ko="후기"  data-en="Reviews">후기</a>
-  <a href="#reservation" onclick="closeMobile()" data-ko="예약"  data-en="Reserve">예약</a>
-  <a href="#inquiry"     onclick="closeMobile()" data-ko="문의"  data-en="Inquiry">문의</a>
-  <a href="#location"    onclick="closeMobile()" data-ko="위치"  data-en="Location">위치</a>
+  <a href="#about"       onclick="closeMobile()" data-ko="소개"   data-en="About">소개</a>
+  <a href="#spaces"      onclick="closeMobile()" data-ko="공간"   data-en="Spaces">공간</a>
+  <a href="#packages"    onclick="closeMobile()" data-ko="패키지" data-en="Packages">패키지</a>
+  <a href="#reviews"     onclick="closeMobile()" data-ko="후기"   data-en="Reviews">후기</a>
+  <a href="#reservation" onclick="closeMobile()" data-ko="예약"   data-en="Reserve">예약</a>
+  <a href="#inquiry"     onclick="closeMobile()" data-ko="문의"   data-en="Inquiry">문의</a>
+  <a href="#location"    onclick="closeMobile()" data-ko="위치"   data-en="Location">위치</a>
   <div class="mobile-lang">
     <button class="active" onclick="setLang('ko')">한국어</button>
     <button onclick="setLang('en')">English</button>
@@ -697,6 +741,7 @@
 <!-- HERO -->
 <section id="hero">
   <div class="hero-inner">
+    <span class="hero-target-badge" data-ko="리야드 한국 출장자를 위한" data-en="For Korean Business Travelers in Riyadh">리야드 한국 출장자를 위한</span>
     <p class="hero-eyebrow">Saudi Arabia · Riyadh · Guesthouse</p>
     <h1 class="hero-title">HUE STAY</h1>
     <p class="hero-tagline">Where Every Shade Feels Like Home</p>
@@ -749,6 +794,28 @@
   </div>
 </section>
 
+<!-- SERVICE STRIP -->
+<div id="service-strip">
+  <div class="svc-row">
+    <div class="svc-item">
+      <span class="svc-icon">🍽️</span>
+      <span class="svc-text" data-ko="조식 · 석식<br>식사 제공" data-en="Breakfast &<br>Dinner Included">조식 · 석식<br>식사 제공</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-icon">🚿</span>
+      <span class="svc-text" data-ko="1인 1실<br>개별 화장실" data-en="Private Room<br>& Bathroom">1인 1실<br>개별 화장실</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-icon">🧺</span>
+      <span class="svc-text" data-ko="세탁 · 청소<br>서비스 포함" data-en="Laundry &<br>Cleaning Included">세탁 · 청소<br>서비스 포함</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-icon">🚗</span>
+      <span class="svc-text" data-ko="공항 픽업<br>지원" data-en="Airport<br>Pickup">공항 픽업<br>지원</span>
+    </div>
+  </div>
+</div>
+
 <!-- SPACES -->
 <section id="spaces">
   <div class="container">
@@ -777,6 +844,56 @@
     <div class="gstrip-item"><div class="gstrip-bg g5"></div><img src="images/gallery5.jpg" loading="lazy" decoding="async" onload="this.classList.add('on')" onerror="this.remove()"></div>
   </div>
 </div>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="container">
+    <p class="eyebrow">PACKAGES</p>
+    <h2 class="section-title" data-ko="류스테이 패키지" data-en="Hue Stay Packages">류스테이 패키지</h2>
+    <div class="divider"></div>
+    <p class="section-desc" data-ko="숙박부터 식사, 특별한 저녁 모임까지 — 출장 일정에 맞게 골라보세요." data-en="From accommodation to meals and private dining — choose what fits your schedule.">숙박부터 식사, 특별한 저녁 모임까지 — 출장 일정에 맞게 골라보세요.</p>
+    <div class="pkg-grid">
+      <div class="pkg-card">
+        <div class="pkg-icon">🏠</div>
+        <h3 class="pkg-title" data-ko="류스테이 숙박" data-en="Stay Package">류스테이 숙박</h3>
+        <p class="pkg-sub" data-ko="1인 1실 프라이빗 스테이" data-en="Private Room Stay">1인 1실 프라이빗 스테이</p>
+        <ul class="pkg-list">
+          <li data-ko="1인 1실 · 개별 화장실" data-en="Private room & bathroom">1인 1실 · 개별 화장실</li>
+          <li data-ko="개별 TV · 냉장고 구비" data-en="Personal TV & refrigerator">개별 TV · 냉장고 구비</li>
+          <li data-ko="킹사이즈 침대" data-en="King-size bed">킹사이즈 침대</li>
+          <li data-ko="세탁 & 청소 서비스" data-en="Laundry & cleaning service">세탁 & 청소 서비스</li>
+          <li data-ko="렌트카 · 유심 연결 지원" data-en="Car rental & SIM card support">렌트카 · 유심 연결 지원</li>
+        </ul>
+        <a href="#reservation" class="pkg-cta" data-ko="숙박 문의하기" data-en="Inquire Now">숙박 문의하기</a>
+      </div>
+      <div class="pkg-card featured">
+        <span class="pkg-popular" data-ko="인기" data-en="Popular">인기</span>
+        <div class="pkg-icon">🍱</div>
+        <h3 class="pkg-title" data-ko="류스테이 식사" data-en="Meal Package">류스테이 식사</h3>
+        <p class="pkg-sub" data-ko="조식 · 석식 풀패키지" data-en="Full Breakfast & Dinner">조식 · 석식 풀패키지</p>
+        <ul class="pkg-list">
+          <li data-ko="매일 조식 · 석식 제공" data-en="Daily breakfast & dinner">매일 조식 · 석식 제공</li>
+          <li data-ko="한식 위주 정성 식단" data-en="Korean home-style menu">한식 위주 정성 식단</li>
+          <li data-ko="필요시 점심 별도 제공" data-en="Lunch available on request">필요시 점심 별도 제공</li>
+          <li data-ko="도시락 서비스 가능" data-en="Lunchbox service available">도시락 서비스 가능</li>
+        </ul>
+        <a href="#reservation" class="pkg-cta" data-ko="식사 패키지 문의" data-en="Inquire Now">식사 패키지 문의</a>
+      </div>
+      <div class="pkg-card">
+        <div class="pkg-icon">🥩</div>
+        <h3 class="pkg-title" data-ko="류스테이 디너" data-en="Dinner Package">류스테이 디너</h3>
+        <p class="pkg-sub" data-ko="프라이빗 저녁 모임" data-en="Private Evening Dining">프라이빗 저녁 모임</p>
+        <ul class="pkg-list">
+          <li data-ko="양고기 바베큐" data-en="Lamb barbecue">양고기 바베큐</li>
+          <li data-ko="이모카세 다양한 메뉴" data-en="Omakase-style seasonal menu">이모카세 다양한 메뉴</li>
+          <li data-ko="프라이빗 파티룸" data-en="Private party room">프라이빗 파티룸</li>
+          <li data-ko="소그룹 모임 · 팀 회식 가능" data-en="Small group & team dinner">소그룹 모임 · 팀 회식 가능</li>
+        </ul>
+        <a href="#reservation" class="pkg-cta" data-ko="디너 예약 문의" data-en="Inquire Now">디너 예약 문의</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- REVIEWS -->
 <section id="reviews">
@@ -842,10 +959,10 @@
     <!-- 주요 CTA: 카카오톡 / 왓츠앱 -->
     <p style="text-align:center;font-size:.88rem;color:var(--brown-light);margin-bottom:1.4rem" data-ko="카카오톡·왓츠앱으로 빠르게 예약하세요. 24시간 내 답변드립니다." data-en="Book instantly via KakaoTalk or WhatsApp. We reply within 24 hours.">카카오톡·왓츠앱으로 빠르게 예약하세요. 24시간 내 답변드립니다.</p>
     <div class="res-cta-row">
-      <a href="https://open.kakao.com/o/search#perfectjjong" target="_blank" class="res-cta-btn res-kakao" style="color:#3A1D1D">
+      <a href="https://open.kakao.com/o/search#roykiss" target="_blank" class="res-cta-btn res-kakao" style="color:#3A1D1D">
         <span class="res-cta-icon">💬</span>
-        <span class="res-cta-name" data-ko="카카오톡" data-en="KakaoTalk">카카오톡</span>
-        <span class="res-cta-sub">perfectjjong</span>
+        <span class="res-cta-name" data-ko="카카오톡 (가장 빠름)" data-en="KakaoTalk (Fastest)">카카오톡 (가장 빠름)</span>
+        <span class="res-cta-sub">roykiss</span>
       </a>
       <a href="https://wa.me/966569814239" target="_blank" class="res-cta-btn res-wa" style="color:#fff">
         <span class="res-cta-icon">📱</span>
@@ -894,6 +1011,20 @@
     </div>
   </div>
 </section>
+
+<!-- CORPORATE BANNER -->
+<div id="corporate" style="background:#F5ECD7;border-top:1px solid #E8DDD4;border-bottom:1px solid #E8DDD4;padding:2.4rem 0;">
+  <div style="max-width:1160px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
+    <div>
+      <p style="color:#C4714A;font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:.5rem;" data-ko="기업 협약 · 장기 숙박" data-en="Corporate Partnership · Long-term Stay">기업 협약 · 장기 숙박</p>
+      <p style="color:#3D2B1F;font-family:'Playfair Display',serif;font-size:1.28rem;margin-bottom:.4rem;" data-ko="기업 단위 계약으로 더 유리한 조건을" data-en="Better rates for corporate bookings">기업 단위 계약으로 더 유리한 조건을</p>
+      <p style="color:#8C6B57;font-size:.85rem;line-height:1.65;" data-ko="건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다." data-en="Tailored proposals for construction, manufacturing, and frequent business travelers.">건설사 · 제조업 · 출장 잦은 법인 담당자분께 맞춤 제안 드립니다.</p>
+    </div>
+    <a href="https://open.kakao.com/o/search#roykiss" target="_blank"
+       style="display:inline-block;padding:.85rem 2rem;background:#C4714A;color:#fff;border-radius:50px;font-size:.86rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;"
+       data-ko="기업제휴 문의하기" data-en="Corporate Inquiry">기업제휴 문의하기</a>
+  </div>
+</div>
 
 <!-- INQUIRY -->
 <section id="inquiry">
