@@ -78,9 +78,9 @@ export default {
         const token = await getAccessToken(env);
         const rows = await getRows(env, token, '예약');
         const reservations = rows.slice(1).map((r, i) => ({
-          id: i+1, date: r[0]||'', name: r[1]||'', contact: r[2]||'',
-          email: r[3]||'', company: r[4]||'', checkin: r[5]||'', checkout: r[6]||'',
-          guests: r[7]||'', message: r[8]||'',
+          id: i+1, date: r[0]||'', package_type: r[1]||'', name: r[2]||'', contact: r[3]||'',
+          email: r[4]||'', company: r[5]||'', checkin: r[6]||'', checkout: r[7]||'',
+          guests: r[8]||'', message: r[9]||'',
         }));
         return json({ ok: true, reservations }, 200, cors);
       } catch(e) { return json({ ok: false, error: String(e?.message||e) }, 500, cors); }
