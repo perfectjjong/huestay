@@ -1407,7 +1407,7 @@ function submitPm(e) {
   const contact  = document.getElementById('pmContact').value;
   const company  = document.getElementById('pmCompany').value;
   const msg      = document.getElementById('pmMsg').value;
-  const data = { type:'reservation', package_type:pkgType, name, contact, company, message:msg };
+  const data = { type:'inquiry', subject: pkgType, name, contact, company, message:msg, isPrivate: true };
   fetch(SUBMIT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }).catch(()=>{});
   const waMsg = encodeURIComponent(
     `[휴스테이 — ${pkgType}]\n이름: ${name}\n연락처: ${contact}${company?'\n회사명: '+company:''}\n메모: ${msg||'-'}`
